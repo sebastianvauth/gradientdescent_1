@@ -33,13 +33,21 @@
         ul {
             padding-left: 20px;
         }
-        .image-placeholder, .interactive-placeholder, .continue-button, .vocab-section, .why-it-matters, .test-your-knowledge, .faq-section, .stop-and-think {
+        .image-placeholder, .visual-aid-placeholder, .interactive-placeholder, .continue-button, .vocab-section, .why-it-matters, .test-your-knowledge, .faq-section, .stop-and-think {
             text-align: left;
         }
-        .image-placeholder img, .interactive-placeholder img {
+        .image-placeholder img, .visual-aid-placeholder img, .interactive-placeholder img {
             max-width: 100%;
             height: auto;
             border-radius: 5px;
+        }
+        .visual-aid-placeholder, .interactive-placeholder {
+            margin-top: 20px;
+        }
+        .visual-aid-placeholder .caption, .interactive-placeholder .caption {
+            font-style: italic;
+            text-align: center;
+            margin-top: 5px;
         }
         .vocab-section, .why-it-matters, .test-your-knowledge, .faq-section, .stop-and-think {
             padding: 20px;
@@ -148,185 +156,137 @@
             margin-top: 10px;
             margin-bottom: 8px;
         }
+        .faq-section p {
+            margin-bottom: 15px;
+        }
     </style>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
+
     <section id="section1">
         <div class="image-placeholder">
-            <img src="/placeholder.svg?height=300&width=600" alt="A cartoon image of a winding path leading up a mountain, with a flag at the summit. The path is labeled 'Optimization Path', and the flag is labeled 'Best Model'.">
+            <img src="/placeholder.svg?height=300&width=600" alt="A hiker standing at a crossroads on a mountain path, looking at a map, symbolizing the need to choose the right direction in optimization, just as a hiker chooses the best path to reach their destination.">
         </div>
-        <h1>Welcome to the World of Optimization!</h1>
-        <p>Hello there, future machine learning masters! Have you ever wondered how a machine learning model goes from being a confused mess to making accurate predictions? It's not magic, it's <strong>optimization</strong>! In this course, we're going to unravel the secrets behind one of the most important algorithms in machine learning: <strong>Gradient Descent</strong>. But first, let us start why we even need it in the first place.</p>
-        <div class="continue-button" onclick="showNextSection(2)">Continue</div>
+        <h1>Finding the Sweet Spot: Why We Need Gradient Descent</h1>
+        <p>Hello there, aspiring machine learning enthusiast! Welcome to the exciting world of optimization. In many machine learning tasks, our goal is to find the best set of parameters for our model that minimize the error or, in other words, minimize the cost function. Think of it as trying to find the lowest point in a vast, hilly landscape, and you are a hiker trying to find your way down. You could try to measure the elevation at every single point, but that would take forever, especially if the landscape is enormous. This is similar to what happens when we try to calculate the least squares solution directly for datasets with millions or billions of data points.</p>
     </section>
 
     <section id="section2">
-        <p>Imagine you're trying to bake the perfect cake. You have a recipe, but you're not quite sure about the exact amount of sugar or the perfect baking time. So, you bake a cake, taste it, and adjust the ingredients. You repeat this process until you have the most delicious cake ever. That's optimization in a nutshell! You are iteratively trying to find the best combination for your model.</p>
+        
+        <p>Let's introduce the idea of a <strong>cost function</strong>. Imagine you're learning to shoot basketball. Every time you miss, you feel a bit of disappointment, right? That feeling is similar to what a cost function represents in machine learning.</p>
+        <div class="visual-aid-placeholder">
+            <h3>The Basketball Analogy</h3>
+            <img src="/placeholder.svg?height=300&width=600" alt="An illustration showing a basketball player shooting hoops. The trajectory of each shot is marked, with successful shots highlighted in green and missed shots in red. The varying distances and angles of missed shots visually represent different levels of 'cost' or error.">
+            <p class="caption">Just like varying degrees of misses in basketball, the cost function quantifies how far our model's predictions are from the actual values.</p>
+        </div>
+        <p>The cost function measures how 'wrong' our model's predictions are compared to the actual values. The higher the cost, the worse our model is performing. Our ultimate goal? To find the model parameters that make this cost function as small as possible, like perfecting your shot to hit the basket every time.</p>
+        <div class="vocab-section">
+            <h3>Build Your Vocab</h3>
+            <h4 class="vocab-term">Cost Function</h4>
+            <p>A function that measures the error or 'wrongness' of a machine learning model's predictions. It's a way to quantify the difference between what the model predicts and what the actual values are. The goal in many machine learning tasks is to minimize this function.</p>
+        </div>
         <div class="continue-button" onclick="showNextSection(3)">Continue</div>
     </section>
 
     <section id="section3">
-        <p>In machine learning, optimization is similar. We have a model, which is like our cake recipe. The model has parameters, which are like the ingredients. Our goal is to find the best values for these parameters so that our model makes the best possible predictions. Instead of a cake we have a dataset and instead of taste we have a cost function to evaluate how good our 'ingredients' are.</p>
+        
+        <p>Now, you might think, 'Why not just try out all possible combinations of parameters and see which one gives the lowest cost?' That's like trying to find the lowest point in our hilly landscape by measuring the elevation at every single spot. Sounds exhausting, doesn't it?</p>
+        <div class="interactive-placeholder">
+            <h3>Explore the Landscape</h3>
+            <img src="/placeholder.svg?height=300&width=600" alt="A 3D interactive model of a hilly landscape. Users can click on different points to see the elevation (cost) displayed. The landscape has multiple hills and valleys, with the lowest point (global minimum) highlighted. Users can zoom in/out and rotate the view. There's also a button to toggle a grid overlay to visualize the density of points that would need to be checked in a brute-force approach.">
+            <p class="caption">Click on different points to see the elevation. Try to find the lowest point. Imagine having to do this for every single point in a much larger landscape!</p>
+        </div>
+        <p>For small datasets, this brute-force approach might be feasible. But as datasets grow larger, with millions or even billions of data points, it becomes incredibly time-consuming and computationally expensive. It's like trying to find a needle in a haystack by examining every single piece of hay.</p>
         <div class="continue-button" onclick="showNextSection(4)">Continue</div>
     </section>
 
     <section id="section4">
-        <p>We start with some initial values for the parameters, make a prediction, evaluate how good that prediction is, and then adjust the parameters to improve the prediction. We repeat this until we have a model that performs well. The method of adjusting the parameters is our optimization algorithm.</p>
-        <div class="image-placeholder">
-            <img src="/placeholder.svg?height=300&width=600" alt="An illustration showing a baker (representing a data scientist) adjusting knobs on an oven (representing a machine learning model). Each knob is labeled with a parameter (e.g., 'sugar amount', 'baking time'). The baker is tasting a cake slice (representing model output) and making notes (representing evaluation).">
+        
+        <p>This is where Gradient Descent comes to the rescue. Instead of examining every single point, we'll use a clever iterative method to 'walk down' the landscape towards the lowest point. Think of it as a smart hiker who uses the slope of the terrain to guide their steps, always moving downhill.</p>
+        <div class="visual-aid-placeholder">
+            <h3>The Smart Hiker</h3>
+            <img src="/placeholder.svg?height=300&width=600" alt="An animation showing a hiker descending a mountain. The hiker starts at a random point high up the mountain. In each step, an arrow appears, indicating the direction of the steepest slope (downhill). The hiker follows the arrow, taking a step in that direction. The process repeats, with the hiker gradually moving towards the bottom of the valley. The path taken by the hiker is traced on the landscape.">
+            <p class="caption">Like a smart hiker, Gradient Descent uses the 'slope' of the cost function to find the most efficient path to the minimum.</p>
         </div>
+        <p>Gradient Descent is like our smart hiker. It starts at a random point and takes steps in the direction of the steepest decrease in the cost function. With each step, it gets closer to the bottom, the point where the cost is minimized.</p>
         <div class="continue-button" onclick="showNextSection(5)">Continue</div>
     </section>
 
     <section id="section5">
-        <p>One common way to find the 'best' parameters for a model is the <strong>Least Squares</strong> method. The idea is simple: we want to find the parameters that minimize the difference between what our model predicts and what we actually observe in our data.</p>
+        
+        <p>Why is Gradient Descent so important in machine learning? Here's the deal:</p>
+        <div class="why-it-matters">
+            <h3>Why It Matters</h3>
+            <p>Gradient Descent is a fundamental optimization algorithm used in various machine learning models, from linear regression to deep neural networks. It provides an efficient way to train models on large datasets, making it a crucial tool for any machine learning practitioner. By helping us find the optimal model parameters, Gradient Descent enables us to build accurate and powerful predictive models that can solve real-world problems.</p>
+        </div>
         <div class="continue-button" onclick="showNextSection(6)">Continue</div>
     </section>
 
     <section id="section6">
-        <p>Think of it like trying to draw a line that best fits a set of points on a graph. You want the line to be as close as possible to all the points. Least squares helps us find the equation of that line by minimizing the sum of the squared distances between the points and the line.</p>
-        <div class="image-placeholder">
-            <img src="/placeholder.svg?height=300&width=600" alt="A graph with a set of scattered data points (blue dots). A straight line (red) is drawn through the points, representing the 'best fit' line. For one point, a dashed line shows the vertical distance between the point and the line, labeled 'Error'. Below the graph, the text: 'Least Squares minimizes the sum of the squared errors (distances) between the data points and the line.'">
+        
+        <p>Let's address some common questions you might have:</p>
+        <div class="faq-section">
+            <h3>Frequently Asked Questions</h3>
+            <h4>Is Gradient Descent always the best optimization method?</h4>
+            <p>While Gradient Descent is powerful and widely used, it's not always the best choice for every situation. There are other optimization algorithms, each with its strengths and weaknesses. The best choice depends on the specific problem, the size of the dataset, and the complexity of the model.</p>
+            <h4>Can Gradient Descent get stuck?</h4>
+            <p>Yes, it's possible. Imagine our hiker getting stuck in a small dip on the mountainside, thinking they've reached the bottom when there's actually a deeper valley elsewhere. We'll explore this in more detail in later lessons, but for now, know that it's something to be aware of.</p>
         </div>
         <div class="continue-button" onclick="showNextSection(7)">Continue</div>
     </section>
 
     <section id="section7">
-        <p>Mathematically, if our model's prediction is given by \( f(x) \) and the actual value is \( y \), we want to minimize the sum of squared errors: \( \sum (y - f(x))^2 \). For simple linear regression (where \( f(x) = mx + b \), there's a direct formula to find the best \( m \) (slope) and \( b \) (intercept) that minimize this sum.</p>
-        <p>Let's break down the math behind least squares for a simple linear regression. Our goal is to find the slope \( m \) and y-intercept \( b \) of the line \( y = mx + b \) that best fits our data.</p>
-        <p>Given a set of \( n \) data points \( (x_1, y_1), (x_2, y_2), ..., (x_n, y_n) \), we want to minimize the sum of the squared differences between the actual \( y \) values and the predicted \( y \) values. This sum is called the Residual Sum of Squares (RSS):</p>
-        <p>\[ RSS(m, b) = \sum_{i=1}^{n} (y_i - (mx_i + b))^2 \]</p>
-        <p>To find the minimum of this function, we take the partial derivatives with respect to \( m \) and \( b \), set them equal to zero, and solve for \( m \) and \( b \).</p>
-        <h4>Partial Derivative with respect to \( m \)</h4>
-        <p>\[ \frac{\partial RSS}{\partial m} = -2 \sum_{i=1}^{n} x_i(y_i - (mx_i + b)) \]</p>
-        <p>Setting this to zero gives us:</p>
-        <p>\[ \sum_{i=1}^{n} x_i(y_i - (mx_i + b)) = 0 \]</p>
-        <h4>Partial Derivative with respect to \( b \)</h4>
-        <p>\[ \frac{\partial RSS}{\partial b} = -2 \sum_{i=1}^{n} (y_i - (mx_i + b)) \]</p>
-        <p>Setting this to zero gives us:</p>
-        <p>\[ \sum_{i=1}^{n} (y_i - (mx_i + b)) = 0 \]</p>
-        <h4>Solving for \( m \) and \( b \)</h4>
-        <p>Solving these two equations simultaneously gives us the formulas for \( m \) and \( b \):</p>
-        <p>\[ m = \frac{n\sum_{i=1}^{n}x_iy_i - \sum_{i=1}^{n}x_i\sum_{i=1}^{n}y_i}{n\sum_{i=1}^{n}x_i^2 - (\sum_{i=1}^{n}x_i)^2} \]</p>
-        <p>\[ b = \frac{\sum_{i=1}^{n}y_i - m\sum_{i=1}^{n}x_i}{n} \]</p>
-        <h4>Example Calculation</h4>
-        <p>Let's say we have the following data points: (1, 2), (2, 4), (3, 5)</p>
-        <p>First, we calculate the sums:</p>
-        <p>\[ \sum x_i = 1 + 2 + 3 = 6 \]</p>
-        <p>\[ \sum y_i = 2 + 4 + 5 = 11 \]</p>
-        <p>\[ \sum x_iy_i = 1*2 + 2*4 + 3*5 = 25 \]</p>
-        <p>\[ \sum x_i^2 = 1^2 + 2^2 + 3^2 = 14 \]</p>
-        <p>Then, we plug these into the formulas for \( m \) and \( b \):</p>
-        <p>\[ m = \frac{3*25 - 6*11}{3*14 - 6^2} = \frac{75 - 66}{42 - 36} = \frac{9}{6} = 1.5 \]</p>
-        <p>\[ b = \frac{11 - 1.5*6}{3} = \frac{11 - 9}{3} = \frac{2}{3} \approx 0.67 \]</p>
-        <p>So, the line of best fit is \( y = 1.5x + 0.67 \).</p>
+        
+        <p>Before we move further, let's solidify some key terms:</p>
+        <div class="vocab-section">
+            <h3>Build Your Vocabulary</h3>
+            <h4 class="vocab-term">Optimization</h4>
+            <p>The process of finding the best set of parameters for a model that minimize a given cost function. It's like tuning the settings of a machine to make it work as efficiently as possible.</p>
+            <h4 class="vocab-term">Least Squares Solution</h4>
+            <p>A method for finding the best-fitting line (or hyperplane) by minimizing the sum of the squared differences between the observed and predicted values. It's a way to find the 'average' best fit, but it can be computationally expensive for large datasets.</p>
+        </div>
         <div class="continue-button" onclick="showNextSection(8)">Continue</div>
     </section>
 
     <section id="section8">
-        <p>Sounds great, right? We have a method to find the perfect parameters! But there's a catch. The direct formulas for least squares become computationally very expensive (or even impossible to compute) when we have a lot of data or when our model has many parameters.</p>
-        <div class="why-it-matters">
-            <h3>Why It Matters</h3>
-            <p>In today's world, we often deal with massive datasets and complex models with millions or even billions of parameters. Least squares simply can't handle that scale efficiently.</p>
+        
+        <p>Let's take a moment to reflect:</p>
+        <div class="stop-and-think">
+            <h3>Stop and Think</h3>
+            <h4>Imagine you're trying to teach a robot to navigate a maze. How could the concept of a cost function be applied in this scenario? What might the 'cost' represent?</h4>
+            <p><b>Hint:</b> Think about what you want the robot to achieve and what you want it to avoid in the maze.</p>
+            <button class="reveal-button" onclick="revealAnswer('stop-and-think-1')">Reveal</button>
+            <p id="stop-and-think-1" style="display: none;">In this scenario, the cost function could represent the robot's progress through the maze and the actions it should avoid. For instance, the cost could increase with the number of steps taken (encouraging efficiency), the distance from the exit (guiding the robot towards the goal), and penalties for hitting walls (teaching the robot to avoid obstacles). The cost would be minimized when the robot reaches the exit in the fewest steps without hitting any walls. The optimal parameters found through minimizing the cost function would define the robot's best strategy for navigating the maze.</p>
         </div>
         <div class="continue-button" onclick="showNextSection(9)">Continue</div>
     </section>
 
     <section id="section9">
-        <p>Imagine trying to fit a line to millions of data points. The calculations would take forever! And that's just a simple line. More complex models, like neural networks, have many more parameters, making least squares impractical.</p>
-        <div class="image-placeholder">
-            <img src="/placeholder.svg?height=300&width=600" alt="An image depicting a tiny stick figure (representing a data scientist) looking up at a towering mountain of data, with a small calculator in hand. The mountain is labeled 'Big Data', and a speech bubble from the stick figure says, 'Least squares won't cut it here!'">
+        
+        <p>Alright, let's see how well you've grasped the concepts so far. Time for a quick quiz!</p>
+        <div class="test-your-knowledge">
+            <h3>Test Your Knowledge</h3>
+            <h4>What is the main advantage of using Gradient Descent over directly calculating the least squares solution for large datasets?</h4>
+            <button class="reveal-button" onclick="revealAnswer('test-your-knowledge-1')">Show Options</button>
+            <div id="test-your-knowledge-1" style="display: none;">
+                <p><input type="radio" name="q1" value="a"> Gradient Descent is more accurate.</p>
+                <p><input type="radio" name="q1" value="b"> Gradient Descent is more efficient.</p>
+                <p><input type="radio" name="q1" value="c"> Gradient Descent is easier to understand.</p>
+                <p><input type="radio" name="q1" value="d"> Gradient Descent requires less data.</p>
+                <button class="check-button" onclick="checkAnswer('q1', 'b')">Check Answer</button>
+                <p id="q1-feedback" style="display: none;"></p>
+            </div>
         </div>
         <div class="continue-button" onclick="showNextSection(10)">Continue</div>
     </section>
 
     <section id="section10">
-        <p>To overcome this challenge, we need a more efficient way to find the best parameters. We need an algorithm that can handle large datasets and complex models without breaking the bank (or your computer's memory).</p>
+        
+        <p>Great job completing the first lesson! You've now been introduced to the concept of optimization and learned why Gradient Descent is a crucial tool in machine learning. You've also started building your vocabulary and understanding the importance of cost functions. In the next lesson, we'll dive deeper into the mechanics of Gradient Descent and see how it actually works step-by-step. Get ready to explore the exciting world of iterative optimization!</p>
+        <div class="image-placeholder">
+            <img src="/placeholder.svg?height=300&width=600" alt="A winding path leading down a mountain, symbolizing the journey of learning and mastering Gradient Descent, with each step representing progress towards the goal of optimization.">
+        </div>
         <div class="continue-button" onclick="showNextSection(11)">Continue</div>
-    </section>
-
-    <section id="section11">
-        <p>This is where <strong>Gradient Descent</strong> comes to the rescue! Instead of trying to calculate the perfect parameters directly, gradient descent takes an iterative approach. It starts with an initial guess for the parameters and gradually improves them step-by-step, like a hiker finding their way down a mountain by following the steepest path.</p>
-        <div class="continue-button" onclick="showNextSection(12)">Continue</div>
-    </section>
-
-    <section id="section12">
-        <p>The 'gradient' in gradient descent refers to the slope of the cost function (which measures how bad our model's predictions are) with respect to the parameters. By moving in the opposite direction of the gradient (downhill), we can iteratively reduce the cost and improve our model.</p>
-        <div class="image-placeholder">
-            <img src="/placeholder.svg?height=300&width=600" alt="An illustration of a hiker (representing a data scientist) descending a mountain (representing the cost function). The hiker is following a path marked with arrows pointing downhill (representing the negative gradient). The valley at the bottom of the mountain is labeled 'Minimum Cost'.">
-        </div>
-        <div class="continue-button" onclick="showNextSection(13)">Continue</div>
-    </section>
-
-    <section id="section13">
-        <p>Gradient descent is much more scalable than least squares because it doesn't require complex calculations involving the entire dataset at once. It can handle large datasets and complex models efficiently, making it a cornerstone of modern machine learning.</p>
-        <div class="continue-button" onclick="showNextSection(14)">Continue</div>
-    </section>
-
-    <section id="section14">
-        <div class="vocab-section">
-            <h3>Build Your Vocab</h3>
-            <h4 class="vocab-term">Optimization</h4>
-            <p>The process of finding the best set of parameters for a model to minimize a particular function, such as a cost function, or maximize another, such as an objective function.</p>
-            <h4 class="vocab-term">Least Squares</h4>
-            <p>A method for finding the best-fitting curve (e.g., a line) by minimizing the sum of the squared differences between the observed data points and the predicted values on the curve.</p>
-            <h4 class="vocab-term">Iterative Method</h4>
-            <p>An approach that repeatedly refines an approximation to get closer to the desired solution, as opposed to a direct method that aims to solve the problem in a single step.</p>
-            <h4 class="vocab-term">Cost Function</h4>
-            <p>A function that measures the error or 'cost' associated with a particular set of model parameters. The goal of many optimization algorithms is to minimize the cost function.</p>
-        </div>
-        <div class="continue-button" onclick="showNextSection(15)">Continue</div>
-    </section>
-
-    <section id="section15">
-        <div class="stop-and-think">
-            <h3>Stop and Think</h3>
-            <h4>Can you think of situations in your daily life where you might use an iterative approach to find the best solution to a problem (similar to how gradient descent works)?</h4>
-        </div>
-        <div class="continue-button" onclick="showNextSection(16)">Continue</div>
-    </section>
-
-    <section id="section16">
-        <div class="faq-section">
-            <h3>Frequently Asked Questions</h3>
-            <h4>Is least squares always better than gradient descent when possible?</h4>
-            <p>While least squares provides an exact solution for simple models, it has limitations. It can be very sensitive to outliers in the data. Gradient descent, while approximate, can be more robust in such cases.</p>
-            <h4>Why are iterative methods like gradient descent needed at all? Why not always use a direct solution like least squares?</h4>
-            <p>Direct solutions often become computationally infeasible or don't even exist for complex models and large datasets that are common in modern machine learning. Iterative methods provide a practical way to find good solutions in these scenarios.</p>
-        </div>
-        <div class="continue-button" onclick="showNextSection(17)">Continue</div>
-    </section>
-
-    <section id="section17">
-        <h2>Test Your Knowledge</h2>
-        <div class="test-your-knowledge">
-            <h3>Test Your Knowledge</h3>
-            <h4>What is the main advantage of using gradient descent over the least squares method for large datasets?</h4>
-            <div id="question1">
-                <input type="radio" name="q1" value="a" id="q1a"><label for="q1a">Gradient descent is more accurate.</label><br>
-                <input type="radio" name="q1" value="b" id="q1b"><label for="q1b">Gradient descent is computationally more efficient.</label><br>
-                <input type="radio" name="q1" value="c" id="q1c"><label for="q1c">Gradient descent is less sensitive to outliers.</label><br>
-                <button class="check-button" onclick="checkAnswer('question1', 'b')">Check Answer</button>
-                <p id="question1-feedback" style="display: none;"></p>
-            </div>
-            <h4>True or False: Least squares is an iterative method.</h4>
-            <div id="question2">
-                <input type="radio" name="q2" value="true" id="q2true"><label for="q2true">True</label><br>
-                <input type="radio" name="q2" value="false" id="q2false"><label for="q2false">False</label><br>
-                <button class="check-button" onclick="checkAnswer('question2', 'false')">Check Answer</button>
-                <p id="question2-feedback" style="display: none;"></p>
-            </div>
-        </div>
-        <div class="continue-button" onclick="showNextSection(18)">Continue</div>
-    </section>
-
-    <section id="section18">
-        <p>Now that we understand why we need iterative methods like gradient descent, let's dive into the core idea behind gradient descent in the next lesson!</p>
-        <div class="image-placeholder">
-            <img src="/placeholder.svg?height=300&width=600" alt="A cartoon image of a hiker (representing a data scientist) looking down a mountain path with a signpost pointing forward, labeled 'Next: The Core Idea of Gradient Descent'.">
-        </div>
     </section>
 
     <script>
@@ -337,9 +297,9 @@
         function showNextSection(nextSectionId) {
             const currentButton = event.target;
             const nextSection = document.getElementById("section" + nextSectionId);
-            
+
             currentButton.style.display = "none";
-            
+
             nextSection.style.display = "block";
             setTimeout(() => {
                 nextSection.style.opacity = "1";
@@ -350,26 +310,39 @@
             }, 500);
         }
 
+        function revealAnswer(id) {
+            const revealText = document.getElementById(id);
+            const revealButton = event.target;
+
+            revealText.style.display = "block";
+            revealButton.style.display = "none";
+        }
+
         function checkAnswer(questionId, correctAnswer) {
-            const question = document.getElementById(questionId);
-            const selectedAnswer = question.querySelector('input:checked');
-            const feedback = document.getElementById(questionId + '-feedback');
-            
+            const selectedAnswer = document.querySelector(`input[name="${questionId}"]:checked`);
+            const feedbackElement = document.getElementById(`${questionId}-feedback`);
+
             if (selectedAnswer) {
                 if (selectedAnswer.value === correctAnswer) {
-                    feedback.textContent = "Correct! Well done!";
-                    feedback.style.color = "green";
+                    feedbackElement.textContent = "Correct! Well done!";
+                    feedbackElement.style.color = "green";
                 } else {
-                    feedback.textContent = "Incorrect. Try again!";
-                    feedback.style.color = "red";
+                    const options = {
+                        "a": "While Gradient Descent can achieve high accuracy, its main advantage over direct calculation isn't necessarily higher accuracy, but rather efficiency, especially for large datasets.",
+                        "c": "The concept of Gradient Descent might seem more complex at first due to its iterative nature, but its efficiency advantage is the key reason for its widespread use.",
+                        "d": "The amount of data needed doesn't directly determine the choice between Gradient Descent and direct least squares calculation. The efficiency in handling large datasets is the primary factor."
+                    };
+                    feedbackElement.textContent = `Incorrect. ${options[selectedAnswer.value]}`;
+                    feedbackElement.style.color = "red";
                 }
-                feedback.style.display = "block";
             } else {
-                feedback.textContent = "Please select an answer.";
-                feedback.style.color = "blue";
-                feedback.style.display = "block";
+                feedbackElement.textContent = "Please select an answer.";
+                feedbackElement.style.color = "blue";
             }
+
+            feedbackElement.style.display = "block";
         }
     </script>
+
 </body>
 </html>

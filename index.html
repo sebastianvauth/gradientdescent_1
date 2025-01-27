@@ -148,33 +148,26 @@
             margin-top: 10px;
             margin-bottom: 8px;
         }
-        .visual-aid {
-          text-align: center;
-          margin-top: 20px;
-        }
-        .visual-aid-description {
-          text-align: center;
-          margin-top: 10px;
-          font-style: italic;
-          color: #555;
-        }
     </style>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <section id="section1">
+        <h1>Finding the Sweet Spot: Why We Need Gradient Descent</h1>
         <div class="image-placeholder">
             <img src="/placeholder.svg?height=300&width=600" alt="A hiker standing at a crossroads on a mountain path, looking at a map, symbolizing the need to choose the right direction in optimization, just as a hiker chooses the best path to reach their destination.">
         </div>
-        <h1>Finding the Sweet Spot: Why We Need Gradient Descent</h1>
         <p>Hello there, aspiring machine learning enthusiast! Welcome to the exciting world of optimization. In many machine learning tasks, our goal is to find the best set of parameters for our model that minimize the error or, in other words, minimize the cost function. Think of it as trying to find the lowest point in a vast, hilly landscape, and you are a hiker trying to find your way down. You could try to measure the elevation at every single point, but that would take forever, especially if the landscape is enormous. This is similar to what happens when we try to calculate the least squares solution directly for datasets with millions or billions of data points.</p>
         <div class="continue-button" onclick="showNextSection(2)">Continue</div>
     </section>
 
     <section id="section2">
+        <h2>Understanding the Cost Function</h2>
         <p>Let's introduce the idea of a <strong>cost function</strong>. Imagine you're learning to shoot basketball. Every time you miss, you feel a bit of disappointment, right? That feeling is similar to what a cost function represents in machine learning.</p>
-        <div class="visual-aid">
-          <img src="/placeholder.svg?height=300&width=600" alt="An illustration showing a basketball player shooting hoops. The trajectory of each shot is marked, with successful shots highlighted in green and missed shots in red. The varying distances and angles of missed shots visually represent different levels of 'cost' or error.">
-          <div class="visual-aid-description">Just like varying degrees of misses in basketball, the cost function quantifies how far our model's predictions are from the actual values.</div>
+        <div class="interactive-placeholder">
+            <img src="/placeholder.svg?height=300&width=600" alt="An illustration showing a basketball player shooting hoops. The trajectory of each shot is marked, with successful shots highlighted in green and missed shots in red. The varying distances and angles of missed shots visually represent different levels of 'cost' or error.">
+            <p>Just like varying degrees of misses in basketball, the cost function quantifies how far our model's predictions are from the actual values.</p>
         </div>
         <p>The cost function measures how 'wrong' our model's predictions are compared to the actual values. The higher the cost, the worse our model is performing. Our ultimate goal? To find the model parameters that make this cost function as small as possible, like perfecting your shot to hit the basket every time.</p>
         <div class="vocab-section">
@@ -186,6 +179,7 @@
     </section>
 
     <section id="section3">
+        <h2>The Inefficiency of Brute Force</h2>
         <p>Now, you might think, 'Why not just try out all possible combinations of parameters and see which one gives the lowest cost?' That's like trying to find the lowest point in our hilly landscape by measuring the elevation at every single spot. Sounds exhausting, doesn't it?</p>
         <div class="interactive-placeholder">
             <img src="/placeholder.svg?height=300&width=600" alt="A 3D interactive model of a hilly landscape. Users can click on different points to see the elevation (cost) displayed. The landscape has multiple hills and valleys, with the lowest point (global minimum) highlighted. Users can zoom in/out and rotate the view. There's also a button to toggle a grid overlay to visualize the density of points that would need to be checked in a brute-force approach.">
@@ -196,17 +190,18 @@
     </section>
 
     <section id="section4">
+        <h2>Introducing Gradient Descent: The Smart Way Down</h2>
         <p>This is where Gradient Descent comes to the rescue. Instead of examining every single point, we'll use a clever iterative method to 'walk down' the landscape towards the lowest point. Think of it as a smart hiker who uses the slope of the terrain to guide their steps, always moving downhill.</p>
-        <div class="visual-aid">
-          <img src="/placeholder.svg?height=300&width=600" alt="An animation showing a hiker descending a mountain. The hiker starts at a random point high up the mountain. In each step, an arrow appears, indicating the direction of the steepest slope (downhill). The hiker follows the arrow, taking a step in that direction. The process repeats, with the hiker gradually moving towards the bottom of the valley. The path taken by the hiker is traced on the landscape.">
-          <div class="visual-aid-description">Like a smart hiker, Gradient Descent uses the 'slope' of the cost function to find the most efficient path to the minimum.</div>
+        <div class="interactive-placeholder">
+            <img src="/placeholder.svg?height=300&width=600" alt="An animation showing a hiker descending a mountain. The hiker starts at a random point high up the mountain. In each step, an arrow appears, indicating the direction of the steepest slope (downhill). The hiker follows the arrow, taking a step in that direction. The process repeats, with the hiker gradually moving towards the bottom of the valley. The path taken by the hiker is traced on the landscape.">
+            <p>Like a smart hiker, Gradient Descent uses the 'slope' of the cost function to find the most efficient path to the minimum.</p>
         </div>
         <p>Gradient Descent is like our smart hiker. It starts at a random point and takes steps in the direction of the steepest decrease in the cost function. With each step, it gets closer to the bottom, the point where the cost is minimized.</p>
         <div class="continue-button" onclick="showNextSection(5)">Continue</div>
     </section>
 
     <section id="section5">
-        <p>Why is Gradient Descent so important in machine learning? Here's the deal:</p>
+        <h2>Why It Matters</h2>
         <div class="why-it-matters">
             <h3>Why It Matters</h3>
             <p>Gradient Descent is a fundamental optimization algorithm used in various machine learning models, from linear regression to deep neural networks. It provides an efficient way to train models on large datasets, making it a crucial tool for any machine learning practitioner. By helping us find the optimal model parameters, Gradient Descent enables us to build accurate and powerful predictive models that can solve real-world problems.</p>
@@ -215,7 +210,7 @@
     </section>
 
     <section id="section6">
-        <p>Let's address some common questions you might have:</p>
+        <h2>Frequently Asked Questions</h2>
         <div class="faq-section">
             <h3>Frequently Asked Questions</h3>
             <h4>Is Gradient Descent always the best optimization method?</h4>
@@ -227,7 +222,7 @@
     </section>
 
     <section id="section7">
-        <p>Before we move further, let's solidify some key terms:</p>
+        <h2>Build Your Vocabulary</h2>
         <div class="vocab-section">
             <h3>Build Your Vocab</h3>
             <h4 class="vocab-term">Optimization</h4>
@@ -239,18 +234,45 @@
     </section>
 
     <section id="section8">
-        <p>Let's take a moment to reflect:</p>
+        <h2>Stop and Think</h2>
         <div class="stop-and-think">
             <h3>Stop and Think</h3>
             <h4>Imagine you're trying to teach a robot to navigate a maze. How could the concept of a cost function be applied in this scenario? What might the 'cost' represent?</h4>
-            <p>Hint: Think about what you want the robot to achieve and what you want it to avoid in the maze.</p>
-            <button class="reveal-button" onclick="revealAnswer('stop-and-think-1')">Reveal</button>
-            <p id="stop-and-think-1" style="display: none;">In this scenario, the cost function could represent the robot's distance from the exit of the maze or the number of steps it takes to reach the exit. A higher cost would mean the robot is far from the exit or taking too many steps. The 'cost' could also incorporate penalties for hitting walls or taking wrong turns. By minimizing this cost function, the robot would learn to navigate the maze efficiently, finding the shortest path to the exit without making mistakes.</p>
+            <p>Think about what you want the robot to achieve and what you want it to avoid in the maze.</p>
+            <button class="reveal-button" onclick="revealAnswer('stop-and-think-1')">Reveal Answer</button>
+            <p id="stop-and-think-1" style="display: none;">In this scenario, the cost function could represent the time taken or distance traveled by the robot to reach the end of the maze. The 'cost' might increase for every wrong turn, collision with a wall, or step taken. The goal would be to minimize this cost, effectively finding the quickest or shortest path through the maze. The robot would learn to optimize its path by minimizing this cost function through repeated attempts, much like how machine learning models improve through training.</p>
         </div>
         <div class="continue-button" onclick="showNextSection(9)">Continue</div>
     </section>
 
     <section id="section9">
+        <h2>Test Your Knowledge</h2>
+        <div class="test-your-knowledge">
+            <h3>Test Your Knowledge</h3>
+            <h4>What is the main advantage of using Gradient Descent over directly calculating the least squares solution for large datasets?</h4>
+            <form id="quiz-form">
+                <label>
+                    <input type="radio" name="quiz" value="0"> Gradient Descent is more accurate.
+                </label><br>
+                <label>
+                    <input type="radio" name="quiz" value="1"> Gradient Descent is more efficient.
+                </label><br>
+                <label>
+                    <input type="radio" name="quiz" value="2"> Gradientlabel>
+                    <input type="radio" name="quiz" value="2"> Gradient Descent is easier to understand.
+                </label><br>
+                <label>
+                    <input type="radio" name="quiz" value="3"> Gradient Descent requires less data.
+                </label><br>
+                <button type="button" class="check-button" onclick="checkAnswer()">Check Answer</button>
+            </form>
+            <p id="quiz-result" style="display: none;"></p>
+        </div>
+        <div class="continue-button" onclick="showNextSection(10)">Continue</div>
+    </section>
+
+    <section id="section10">
+        <h2>Wrapping Up Lesson 1</h2>
         <p>Great job completing the first lesson! You've now been introduced to the concept of optimization and learned why Gradient Descent is a crucial tool in machine learning. You've also started building your vocabulary and understanding the importance of cost functions. In the next lesson, we'll dive deeper into the mechanics of Gradient Descent and see how it actually works step-by-step. Get ready to explore the exciting world of iterative optimization!</p>
         <div class="image-placeholder">
             <img src="/placeholder.svg?height=300&width=600" alt="A winding path leading down a mountain, symbolizing the journey of learning and mastering Gradient Descent, with each step representing progress towards the goal of optimization.">
@@ -286,24 +308,28 @@
             revealButton.style.display = "none";
         }
 
-        function checkAnswer(questionId, correctAnswer) {
-            const selectedAnswer = document.querySelector(`input[name="${questionId}"]:checked`);
-            const feedbackElement = document.getElementById(`${questionId}-feedback`);
-            
+        function checkAnswer() {
+            const form = document.getElementById('quiz-form');
+            const result = document.getElementById('quiz-result');
+            const selectedAnswer = form.querySelector('input[name="quiz"]:checked');
+
             if (selectedAnswer) {
-                if (selectedAnswer.value === correctAnswer) {
-                    feedbackElement.textContent = "Correct! Well done!";
-                    feedbackElement.style.color = "green";
-                } else {
-                    feedbackElement.textContent = "Incorrect. Try again!";
-                    feedbackElement.style.color = "red";
-                }
+                const answerIndex = parseInt(selectedAnswer.value);
+                const explanations = [
+                    "While Gradient Descent can achieve high accuracy, its main advantage over direct calculation isn't necessarily higher accuracy, but rather efficiency, especially for large datasets.",
+                    "Correct! Gradient Descent's iterative approach makes it much more efficient for optimizing models on large datasets compared to the computationally expensive direct calculation of the least squares solution.",
+                    "The concept of Gradient Descent might seem more complex at first due to its iterative nature, but its efficiency advantage is the key reason for its widespread use.",
+                    "The amount of data needed doesn't directly determine the choice between Gradient Descent and direct least squares calculation. The efficiency in handling large datasets is the primary factor."
+                ];
+
+                result.textContent = explanations[answerIndex];
+                result.style.color = answerIndex === 1 ? 'green' : 'red';
+                result.style.display = 'block';
             } else {
-                feedbackElement.textContent = "Please select an answer.";
-                feedbackElement.style.color = "blue";
+                result.textContent = "Please select an answer before checking.";
+                result.style.color = 'red';
+                result.style.display = 'block';
             }
-            
-            feedbackElement.style.display = "block";
         }
     </script>
 </body>

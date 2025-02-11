@@ -257,9 +257,54 @@
             <li>\(\nabla_{\beta}C(\beta_{old})\): This is the <strong>gradient</strong> of the cost function \(C(\beta)\) calculated at the current parameter values \(\beta_{old}\). It tells us the direction of steepest ascent at our current position.</li>
         </ul>
         <p>We repeat this update step over and over again, iteratively moving closer and closer to the minimum of the cost function. We continue this process until we 'converge', meaning the cost function stops decreasing significantly, or we reach a pre-defined number of steps.</p>
-        <div class="interactive-placeholder">
-            <img src="/placeholder.svg?height=300&width=600" alt="Interactive 2D graph of a cost function curve. Allow users to adjust a 'learning rate' slider. For each learning rate value, animate a few steps of gradient descent, showing how the step size changes and how it affects convergence towards the minimum. Show annotations for β_start, β_learned, and the gradient steps.">
-        </div>
+        <div id="interactive-container" style="margin: 20px auto; width: 680px; background-color: #f5f5f5; border-radius: 10px; padding: 20px; text-align: center;">
+  <canvas id="gdCanvas" width="600" height="400" style="border:1px solid #ccc; cursor: pointer; border-radius: 5px;"></canvas>
+  <br>
+  <label for="lrSlider" style="font-size:16px;">
+    Learning Rate (α): <span id="lrValue">0.05</span>
+  </label>
+  <input type="range" id="lrSlider" min="0.001" max="1" step="0.001" value="0.05" style="vertical-align: middle;">
+  <br><br>
+  <button id="startBtn" style="
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0px 3px 6px rgba(0,0,0,0.16);
+      margin: 5px;
+  ">Run Gradient Descent</button>
+  <button id="stopBtn" style="
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0px 3px 6px rgba(0,0,0,0.16);
+      margin: 5px;
+  ">Stop</button>
+  <button id="resetBtn" style="
+      background-color: #95a5a6;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0px 3px 6px rgba(0,0,0,0.16);
+      margin: 5px;
+  ">Reset</button>
+  <div id="stepCounter" style="font-size:16px; margin-top:10px;">Steps: 0</div>
+  <div id="errorCounter" style="font-size:16px; margin-top:10px;">Error Rate: 0</div>
+  <div id="infoPanel" style="font-size:16px; margin-top:10px;">
+    Current parameter: \\(\\beta_{\\text{current}} = ?\\)<br>
+    Error: \\(E = ?\\)
+  </div>
+</div>
         <div class="vocab-section">
             <h3>Build Your Vocab</h3>
             <h4 class="vocab-term">Learning Rate (\(\alpha\))</h4>
@@ -355,6 +400,210 @@
             feedback.textContent = options[index];
             feedback.style.display = "block";
         }
+// Get references to HTML elements
+  const canvas = document.getElementById('gdCanvas');
+  const ctx = canvas.getContext('2d');
+  const lrSlider = document.getElementById('lrSlider');
+  const lrValueDisplay = document.getElementById('lrValue');
+  const startBtn = document.getElementById('startBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const stepCounter = document.getElementById('stepCounter');
+  const errorCounter = document.getElementById('errorCounter');
+  const infoPanel = document.getElementById('infoPanel');
+
+  // Learning rate handling
+  let learningRate = parseFloat(lrSlider.value);
+  lrSlider.addEventListener('input', function() {
+    learningRate = parseFloat(lrSlider.value);
+    lrValueDisplay.textContent = learningRate;
+  });
+
+  // Define the original cost function:
+  // f(x) = 50 + ((x - 300)^2)/300, which has a minimum of 50 at x = 300.
+  function costFunction(x) {
+    return 50 + ((x - 300) * (x - 300)) / 300;
+  }
+
+  // Transform the cost function so that the minimum appears at the bottom.
+  // yPos(x) = canvas.height - (f(x) - 50)
+  function yPos(x) {
+    return canvas.height - (costFunction(x) - 50);
+  }
+
+  // The gradient of the cost function: f'(x) = (x - 300)/150.
+  function gradient(x) {
+    return (x - 300) / 150;
+  }
+
+  // Draw the transformed (upside-down) cost function.
+  function drawCostFunction() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+    for (let x = 0; x <= canvas.width; x++) {
+      const y = yPos(x);
+      if (x === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+    }
+    ctx.strokeStyle = "#4a90e2"; // clean blue color
+    ctx.lineWidth = 3;
+    ctx.stroke();
+  }
+
+  // Draw a point on the curve with a label (drawn on the canvas as well).
+  function drawPoint(x, label, color = '#e74c3c') {
+    const y = yPos(x);
+    ctx.beginPath();
+    ctx.arc(x, y, 6, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "black";
+    ctx.fillText(label, x + 10, y - 10);
+  }
+
+  // Draw an arrow from (x1, y1) to (x2, y2) to indicate a gradient descent step.
+  // The arrowhead size is set smaller (headlen = 7).
+  function drawArrow(x1, y1, x2, y2, color = '#27ae60') {
+    const headlen = 7; // length of arrow head
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const angle = Math.atan2(dy, dx);
+    
+    // Draw the line
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Draw the arrow head
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - headlen * Math.cos(angle - Math.PI / 6),
+               y2 - headlen * Math.sin(angle - Math.PI / 6));
+    ctx.lineTo(x2 - headlen * Math.cos(angle + Math.PI / 6),
+               y2 - headlen * Math.sin(angle + Math.PI / 6));
+    ctx.lineTo(x2, y2);
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
+
+  let startingX = null; // User-selected starting point (β_start)
+  let currentX = null;
+  let animationFrameId = null;
+  let iterations = 0;
+
+  // Allow the user to click on the canvas to set the starting point.
+  canvas.addEventListener('click', function(event) {
+    // Only allow setting the starting point if an animation is not running.
+    if (animationFrameId) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    startingX = x;
+    drawCostFunction();
+    drawPoint(startingX, "β_start", '#e74c3c');
+    // Reset the counters and info panel
+    iterations = 0;
+    stepCounter.textContent = "Steps: " + iterations;
+    errorCounter.textContent = "Error Rate: 0";
+    infoPanel.innerHTML = "Current parameter: \\(\\beta_{\\text{current}} = " + startingX.toFixed(2) + "\\)<br>Error: \\(E = " + (costFunction(startingX) - 50).toFixed(2) + "\\)";
+    MathJax.typesetPromise();
+  });
+
+  // Animate the Gradient Descent process until convergence.
+  function runGradientDescent() {
+    drawCostFunction();
+    // Use the user-selected starting point if available; otherwise, choose a random one.
+    currentX = (startingX !== null) ? startingX : Math.floor(Math.random() * canvas.width);
+    drawPoint(currentX, "β_start", '#e74c3c');
+
+    let path = [{ x: currentX, y: yPos(currentX) }];
+    iterations = 0;
+    stepCounter.textContent = "Steps: " + iterations;
+
+    function step() {
+      iterations++;
+      stepCounter.textContent = "Steps: " + iterations;
+      
+      const grad = gradient(currentX);
+      const newX = currentX - learningRate * grad;
+
+      // Draw an arrow to show this gradient descent step.
+      drawArrow(currentX, yPos(currentX), newX, yPos(newX), '#27ae60');
+
+      currentX = newX;
+      path.push({ x: currentX, y: yPos(currentX) });
+
+      // Redraw the cost function and the descent path.
+      drawCostFunction();
+      ctx.beginPath();
+      ctx.moveTo(path[0].x, path[0].y);
+      for (let i = 1; i < path.length; i++) {
+        ctx.lineTo(path[i].x, path[i].y);
+      }
+      ctx.strokeStyle = "#f39c12"; // orange path line
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Mark the current point.
+      drawPoint(currentX, "β_current", '#e74c3c');
+
+      // Compute error as the difference from the minimum cost.
+      const error = costFunction(currentX) - 50;
+      errorCounter.textContent = "Error Rate: " + error.toFixed(2);
+      
+      // Update the LaTeX info panel.
+      infoPanel.innerHTML = "Current parameter: \\(\\beta_{\\text{current}} = " + currentX.toFixed(2) + "\\)<br>Error: \\(E = " + error.toFixed(2) + "\\)";
+      MathJax.typesetPromise();
+
+      // Continue iterating until convergence (gradient nearly zero)
+      // or a maximum iteration count is reached.
+      if (Math.abs(grad) < 0.001 || iterations > 1000) {
+        drawPoint(currentX, "β_{learned}", '#8e44ad'); // final point in purple
+        animationFrameId = null;
+      } else {
+        animationFrameId = requestAnimationFrame(step);
+      }
+    }
+    animationFrameId = requestAnimationFrame(step);
+  }
+
+  // Stop button: Cancel the animation if it's running.
+  stopBtn.addEventListener('click', function() {
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
+  });
+
+  // Reset button: Cancel any running animation and reset the interactive.
+  resetBtn.addEventListener('click', function() {
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
+    startingX = null;
+    currentX = null;
+    iterations = 0;
+    stepCounter.textContent = "Steps: " + iterations;
+    errorCounter.textContent = "Error Rate: 0";
+    infoPanel.innerHTML = "Current parameter: \\(\\beta_{\\text{current}} = ?\\)<br>Error: \\(E = ?\\)";
+    drawCostFunction();
+    MathJax.typesetPromise();
+  });
+
+  // Start the gradient descent animation when the "Run" button is clicked.
+  startBtn.addEventListener('click', function() {
+    runGradientDescent();
+  });
+
+  // Draw the initial cost function on page load.
+  drawCostFunction();
     </script>
 </body>
 </html>

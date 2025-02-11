@@ -154,12 +154,12 @@
 </head>
 <body>
     <section id="section1">
-        <h1>Introduction to Gradient Descent - Why and What?</h1>
-        <div class="image-placeholder">
-            <img src="/placeholder.svg?height=300&width=600" alt="Image showing a person hiking down a gently sloping hill with a clear path leading to a valley, symbolizing the step-by-step approach of gradient descent towards finding the minimum.">
+<div class="image-placeholder">
+            <img src="images//an-illustration-of-a-person-hiking-down.jpeg
+?height=300&width=600" alt="Image showing a person hiking down a gently sloping hill with a clear path leading to a valley, symbolizing the step-by-step approach of gradient descent towards finding the minimum.">
         </div>
-        <h2>Welcome to Gradient Descent!</h2>
-        <p>Hey there, future Machine Learning expert! 👋 Ever wondered how machines learn to make smart decisions? A big part of that magic lies in something called <strong>Gradient Descent</strong>. Think of it as the secret ingredient behind many powerful algorithms. In this first lesson, we'll embark on a journey to understand why Gradient Descent is so important and what it's all about. No complex code or scary math just yet – we'll start with the core concepts. Ready to explore?</p>
+        <h1>Introduction to Gradient Descent - Why and What?</h1>
+        <p>Ever wondered how machines learn to make smart decisions? A big part of that magic lies in something called <strong>Gradient Descent</strong>. Think of it as the secret ingredient behind many powerful algorithms. In this first lesson, we'll understand why Gradient Descent is so important and what it's all about. No complex code or scary math just yet – we'll start with the core concepts. Ready to explore?</p>
         <div class="continue-button" onclick="showNextSection(2)">Continue</div>
     </section>
 
@@ -177,7 +177,7 @@
     <section id="section4">
         <p>Think of the cost function as the landscape of our valley. Our goal is to adjust our model's <strong>parameters</strong> (think of them as your hiking boots and poles) to reach the bottom of this valley, where the cost is minimized and our model performs its best.</p>
         <div class="image-placeholder">
-            <img src="/placeholder.svg?height=300&width=600" alt="Image showing a 3D landscape with hills and valleys, with a red ball at a high point, symbolizing the initial parameters and the cost function landscape.">
+            <img src="images/a-3d-illustration-of-a-landscape.jpeg?height=300&width=600" alt="Image showing a 3D landscape with hills and valleys, with a red ball at a high point, symbolizing the initial parameters and the cost function landscape.">
         </div>
         <div class="continue-button" onclick="showNextSection(5)">Continue</div>
     </section>
@@ -213,15 +213,15 @@
     </section>
 
     <section id="section9">
-        <p>We start by choosing a <strong>random starting point</strong> on this curve. This is our initial guess for the model's parameters – let's call it $$\beta_{start}$$.</p>
-        <div class="image-placeholder">
-            <img src="/placeholder.svg?height=300&width=600" alt="Image of a simple U-shaped curve representing a cost function, with a point marked 'β_start' on the curve, away from the bottom.">
+        <p>We start by choosing a <strong>random starting point</strong> on this curve. This is our initial guess for the model's parameters – let's call it \(\beta_{start}\).</p>
+        <div class="visualaid-placeholder">
+            <img src="/placeholder.svg?height=300&width=600" alt="Graph of a simple U-shaped curve (f(x)=x²) representing a cost function, with a point marked 'β_start' on the curve, away from the bottom.">
         </div>
         <div class="continue-button" onclick="showNextSection(10)">Continue</div>
     </section>
 
     <section id="section10">
-        <p>Now, we need to figure out which way is 'downhill'. In math terms, 'downhill' is the direction of the <strong>negative gradient</strong> of our cost function. The gradient itself, denoted as $$\nabla_{\beta}C(\beta)$$, points in the direction of the steepest <em>increase</em> (uphill). So, to go downhill, we go in the <em>opposite</em> direction, $$-\nabla_{\beta}C(\beta)$$.</p>
+        <p>Now, we need to figure out which way is 'downhill'. In math terms, 'downhill' is the direction of the <strong>negative gradient</strong> of our cost function. The gradient itself, denoted as \(\nabla_{\beta}C(\beta)\), points in the direction of the steepest <em>increase</em> (uphill). So, to go downhill, we go in the <em>opposite</em> direction, \(-\nabla_{\beta}C(\beta)\).</p>
         <div class="continue-button" onclick="showNextSection(11)">Continue</div>
     </section>
 
@@ -234,12 +234,12 @@
     </section>
 
     <section id="section12">
-        <p>The size of each step we take is controlled by something called the <strong>learning rate</strong>, denoted by $$\alpha$$. A larger learning rate means bigger steps, and a smaller learning rate means smaller, more cautious steps.</p>
+        <p>The size of each step we take is controlled by something called the <strong>learning rate</strong>, denoted by \(\alpha\). A larger learning rate means bigger steps, and a smaller learning rate means smaller, more cautious steps.</p>
         <div class="continue-button" onclick="showNextSection(13)">Continue</div>
     </section>
 
     <section id="section13">
-        <p>So, in each step of Gradient Descent, we update our parameters $$\beta$$ using the following rule:</p>
+        <p>So, in each step of Gradient Descent, we update our parameters \(\beta\) using the following rule:</p>
         <div class="continue-button" onclick="showNextSection(14)">Continue</div>
     </section>
 
@@ -251,10 +251,10 @@
 
     <section id="section15">
         <ul>
-            <li>$$\beta_{new}$$: This is the updated value of our parameters after one step.</li>
-            <li>$$\beta_{old}$$: This is the current value of our parameters before the update.</li>
-            <li>$$\alpha$$: This is the <strong>learning rate</strong>. It's a small positive number that determines the step size. We need to choose this carefully – too big and we might overshoot the minimum, too small and it might take forever to get there!</li>
-            <li>$$\nabla_{\beta}C(\beta_{old})$$: This is the <strong>gradient</strong> of the cost function $$C(\beta)$$ calculated at the current parameter values $$\beta_{old}$$. It tells us the direction of steepest ascent at our current position.</li>
+            <li>\(\beta_{new}\): This is the updated value of our parameters after one step.</li>
+            <li>\(\beta_{old}\): This is the current value of our parameters before the update.</li>
+            <li>\(\alpha\): This is the <strong>learning rate</strong>. It's a small positive number that determines the step size. We need to choose this carefully – too big and we might overshoot the minimum, too small and it might take forever to get there!</li>
+            <li>\(\nabla_{\beta}C(\beta_{old})\): This is the <strong>gradient</strong> of the cost function \(C(\beta)\) calculated at the current parameter values \(\beta_{old}\). It tells us the direction of steepest ascent at our current position.</li>
         </ul>
         <p>We repeat this update step over and over again, iteratively moving closer and closer to the minimum of the cost function. We continue this process until we 'converge', meaning the cost function stops decreasing significantly, or we reach a pre-defined number of steps.</p>
         <div class="interactive-placeholder">
@@ -262,7 +262,7 @@
         </div>
         <div class="vocab-section">
             <h3>Build Your Vocab</h3>
-            <h4 class="vocab-term">Learning Rate ($$\alpha$$)</h4>
+            <h4 class="vocab-term">Learning Rate (\(\alpha\))</h4>
             <p>A hyperparameter that controls the step size taken in each iteration of Gradient Descent. It determines how quickly or slowly the algorithm learns.</p>
         </div>
         <p>And that's the essence of Gradient Descent! It's a simple yet powerful way to find the parameters that minimize our cost function and make our Machine Learning models learn.</p>
@@ -270,7 +270,6 @@
     </section>
 
     <section id="section16">
-        <h2>Why Gradient Descent Matters</h2>
         <div class="why-it-matters">
             <h3>Why It Matters</h3>
             <p>Gradient Descent is a cornerstone algorithm in Machine Learning because it provides a practical way to train a wide variety of models, especially when dealing with large datasets and complex cost functions. It's the engine that powers many Machine Learning applications you use every day!</p>
@@ -279,7 +278,6 @@
     </section>
 
     <section id="section17">
-        <h2>Stop and Think</h2>
         <div class="stop-and-think">
             <h3>Stop and Think</h3>
             <h4>Imagine you are tuning a radio to get the clearest signal. Think about how you adjust the dial. How is this similar to or different from Gradient Descent? Share your thoughts in the discussion forum!</h4>
@@ -290,7 +288,6 @@
     </section>
 
     <section id="section18">
-        <h2>Frequently Asked Questions</h2>
         <div class="faq-section">
             <h3>Frequently Asked Questions</h3>
             <h4>Is Gradient Descent always guaranteed to find the absolute best solution?</h4>
@@ -300,7 +297,6 @@
     </section>
 
     <section id="section19">
-        <h2>Test Your Understanding</h2>
         <div class="test-your-knowledge">
             <h3>Test Your Knowledge</h3>
             <h4>Which of the following is NOT a key component of the Gradient Descent algorithm?</h4>
@@ -316,8 +312,7 @@
     </section>
 
     <section id="section20">
-        <h2>Next Up...</h2>
-        <p>Congratulations on completing Lesson 1! 🎉 You now have a solid understanding of the fundamental idea behind Gradient Descent. In the next lesson, we'll dive deeper into the 'cost function' and 'gradients' themselves, and see how we can actually calculate them for a specific type of Machine Learning problem: Linear Regression. Get ready to get a bit more mathematical!</p>
+        <p>Congratulations on completing Lesson 1! You now have a solid understanding of the fundamental idea behind Gradient Descent. In the next lesson, we'll dive deeper into the 'cost function' and 'gradients' themselves, and see how we can actually calculate them for a specific type of Machine Learning problem: Linear Regression. Get ready to get a bit more mathematical!</p>
     </section>
 
     <script>

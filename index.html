@@ -1706,92 +1706,9 @@
             </ol>
             <p>The specific criteria used depend on the application and computational resources available.</p>
         </div>
-        <div class="continue-button" onclick="showNextSection(37)">Continue</div>
  </section>
 
 
-<section id="section37">
-<div class="test-your-knowledge">
-            <h3>Test Your Knowledge</h3>
-            <h4>What happens if we set the learning rate too high in gradient descent?</h4>
-            <div id="test-your-knowledge-1">
-                <p><input type="radio" name="q1" id="q1a"> <label for="q1a">The algorithm will converge more quickly to the minimum</label></p>
-                <p><input type="radio" name="q1" id="q1b"> <label for="q1b">The algorithm might overshoot the minimum and fail to converge</label></p>
-                <p><input type="radio" name="q1" id="q1c"> <label for="q1c">The algorithm will still converge but will require more iterations</label></p>
-                <p><input type="radio" name="q1" id="q1d"> <label for="q1d">The algorithm will always find the global minimum regardless of the learning rate</label></p>
-                <button class="check-button" onclick="checkAnswer('test-your-knowledge-1', 'q1b')">Check Answer</button>
-            </div>
-
-<div class="test-your-knowledge">
-            <h3>Test Your Knowledge</h3>
-            <h4>In our example with \( C(\beta) = \beta^2 \), starting with \( \beta = 5 \) and using learning rate \( \alpha = 0.1 \), what would be the approximate value of \( \beta \) after 10 iterations?</h4>
-            <div id="test-your-knowledge-2">
-                <p><input type="radio" name="q2" id="q2a"> <label for="q2a">0.5</label></p>
-                <p><input type="radio" name="q2" id="q2b"> <label for="q2b">0.6</label></p>
-                <p><input type="radio" name="q2" id="q2c"> <label for="q2c">1.0</label></p>
-                <p><input type="radio" name="q2" id="q2d"> <label for="q2d">0</label></p>
-                <button class="check-button" onclick="checkAnswer('test-your-knowledge-2', 'q2b')">Check Answer</button>
-            </div>
-        </div>
-<div class="test-your-knowledge">
-            <h3>Test Your Knowledge</h3>
-            <h4>Which statement is TRUE about the learning rate in gradient descent?</h4>
-            <div id="test-your-knowledge-3">
-                <p><input type="radio" name="q3" id="q3a"> <label for="q3a">A larger learning rate always leads to faster convergence</label></p>
-                <p><input type="radio" name="q3" id="q3b"> <label for="q3b">The optimal learning rate is always 0.01</label></p>
-                <p><input type="radio" name="q3" id="q3c"> <label for="q3c">The learning rate should be decreased over time for better convergence</label></p>
-                <p><input type="radio" name="q3" id="q3d"> <label for="q3d">The learning rate should always be set to match the magnitude of the parameters</label></p>
-                <button class="check-button" onclick="checkAnswer('test-your-knowledge-3', 'q3c')">Check Answer</button>
-            </div>
-        </div>
-        <div class="test-your-knowledge">
-            <h3>Test Your Knowledge</h3>
-            <h4>Match the following terms to their descriptions:</h4>
-            <div id="test-your-knowledge-4">
-                <p>1. Gradient</p>
-                <p>2. Learning Rate</p>
-                <p>3. Cost Function</p>
-                <p>4. Convergence</p>
-                <p>
-                    <select id="match1">
-                        <option value="">Select...</option>
-                        <option value="a">Vector of partial derivatives pointing in the direction of steepest increase</option>
-                        <option value="b">Hyperparameter controlling the step size in parameter updates</option>
-                        <option value="c">Measures the error between predictions and actual values</option>
-                        <option value="d">When parameter updates become very small, indicating proximity to a minimum</option>
-                    </select>
-                </p>
-                <p>
-                    <select id="match2">
-                        <option value="">Select...</option>
-                        <option value="a">Vector of partial derivatives pointing in the direction of steepest increase</option>
-                        <option value="b">Hyperparameter controlling the step size in parameter updates</option>
-                        <option value="c">Measures the error between predictions and actual values</option>
-                        <option value="d">When parameter updates become very small, indicating proximity to a minimum</option>
-                    </select>
-                </p>
-                <p>
-                    <select id="match3">
-                        <option value="">Select...</option>
-                        <option value="a">Vector of partial derivatives pointing in the direction of steepest increase</option>
-                        <option value="b">Hyperparameter controlling the step size in parameter updates</option>
-                        <option value="c">Measures the error between predictions and actual values</option>
-                        <option value="d">When parameter updates become very small, indicating proximity to a minimum</option>
-                    </select>
-                </p>
-                <p>
-                    <select id="match4">
-                        <option value="">Select...</option>
-                        <option value="a">Vector of partial derivatives pointing in the direction of steepest increase</option>
-                        <option value="b">Hyperparameter controlling the step size in parameter updates</option>
-                        <option value="c">Measures the error between predictions and actual values</option>
-                        <option value="d">When parameter updates become very small, indicating proximity to a minimum</option>
-                    </select>
-                </p>
-                <button class="check-button" onclick="checkMatching()">Check Answers</button>
-            </div>
-        </div>
-    </section>
 
     <script>
         // Show the first section initially

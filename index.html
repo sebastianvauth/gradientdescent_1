@@ -264,6 +264,8 @@
 
     <section id="section15">
         <p>Let's understand gradient descent through a concrete example. Imagine we have a simple cost function with a single parameter: \( C(\beta) = \beta^2 \). This is a parabola with its minimum at \( \beta = 0 \).</p>
+</br>
+
 <!-- Add this where you want to show just the parabola -->
 <div class="interactive-placeholder">
     <canvas id="parabolaCanvas" width="700" height="400"></canvas>
@@ -400,6 +402,7 @@
         })();
     </script>
 </div>
+</br>
         <div class="continue-button" onclick="showNextSection(16)">Continue</div>
     </section>
 
@@ -419,6 +422,7 @@
             <li>Calculate gradient: \( \nabla_\beta C(\beta) = 2 \times 4 = 8 \)</li>
             <li>Update rule: \( \beta = 4 - 0.1 \times 8 = 4 - 0.8 = 3.2 \)</li>
         </ol>
+</br>
 <p>Great, isn't it? Let's continue a few more iterations:</p>
         <div class="continue-button" onclick="showNextSection(18)">Continue</div>
     </section>
@@ -435,6 +439,8 @@
             <li>Gradient: \( 2 \times 2.56 = 5.12 \)</li>
             <li>Update: \( \beta = 2.56 - 0.1 \times 5.12 = 2.56 - 0.512 = 2.048 \)</li>
         </ol>
+</br>
+
 <div class="interactive-placeholder">
     <canvas id="gdCanvas4Iterations" width="700" height="400"></canvas>
     <script>
@@ -446,16 +452,72 @@
         });
     </script>
 </div>
+</br>
+
+<p>As you can see, with each iteration, \( \beta \) gets closer to 0, which is the minimum of our function \( C(\beta) = \beta^2 \). The parameter updates gradually become smaller as we approach the minimum because the gradient becomes smaller (we're on a less steep part of the parabola).</p>
         <div class="continue-button" onclick="showNextSection(19)">Continue</div>
     </section>
 
-    <section id="section19">
-        <p>As you can see, with each iteration, \( \beta \) gets closer to 0, which is the minimum of our function \( C(\beta) = \beta^2 \). The parameter updates gradually become smaller as we approach the minimum because the gradient becomes smaller (we're on a less steep part of the parabola).</p>
-        <div class="continue-button" onclick="showNextSection(20)">Continue</div>
-    </section>
+    
+
+<section id="section19">
+    <p>If we would calculate a fifth iteration of gradient descent, what do you get for the updated parameter value?</p>
+    
+    <div class="quiz-options">
+        <button class="quiz-button" onclick="checkQuizAnswer('correct')">1.6384</button>
+        <button class="quiz-button" onclick="checkQuizAnswer('lower')">2</button>
+        <button class="quiz-button" onclick="checkQuizAnswer('higher')">1.267</button>
+    </div>
+    
+    <p id="quiz-feedback" style="display: none;"></p>
+    
+    <div class="continue-button" onclick="showNextSection(20)">Continue</div>
+    
+    <style>
+        .quiz-options {
+            margin: 20px 0;
+        }
+        .quiz-button {
+            background-color: white;
+            border: 2px solid black;
+            border-radius: 25px;
+            padding: 10px 30px;
+            margin-right: 15px;
+            margin-bottom: 15px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: inline-block;
+        }
+        .quiz-button:hover {
+            background-color: #f0f0f0;
+        }
+        /* Removed colored feedback styles */
+    </style>
+    
+    <script>
+        function checkQuizAnswer(answer) {
+            const feedbackDiv = document.getElementById('quiz-feedback');
+            feedbackDiv.style.display = 'block';
+            feedbackDiv.style.marginBottom = '20px';
+            feedbackDiv.style.lineHeight = '1.6';
+            feedbackDiv.style.color = '#444';
+            
+            if (answer === 'correct') {
+                feedbackDiv.innerHTML = "Exactly, well done! After iteration 4, β = 2.048. In iteration 5, the gradient is 2 × 2.048 = 4.096, so the update is 2.048 - 0.1 × 4.096 = 1.6384.";
+            } else if (answer === 'lower') {
+                feedbackDiv.innerHTML = "That's too high. After iteration 4, β = 2.048. The gradient at this point is 2 × 2.048 = 4.096, so the update should be 2.048 - 0.1 × 4.096 = 1.6384.";
+            } else if (answer === 'higher') {
+                feedbackDiv.innerHTML = "That's too low. After iteration 4, β = 2.048. The gradient at this point is 2 × 2.048 = 4.096, so the update should be 2.048 - 0.1 × 4.096 = 1.6384.";
+            }
+        }
+    </script>
+</section>
 
     <section id="section20">
         <p>If we continued this process, \( \beta \) would eventually converge to 0, which is exactly what we want! This illustrates how gradient descent iteratively finds the minimum of a function.</p>
+</br>
+
         <div class="interactive-placeholder">
     <canvas id="gdCanvasUntilMin" width="700" height="400"></canvas>
     <script>
@@ -467,7 +529,9 @@
         });
     </script>
 </div>
-        <div class="continue-button" onclick="showNextSection(21)">Continue</div>
+</br>
+
+      <div class="continue-button" onclick="showNextSection(21)">Continue</div>
     </section>
 
     <section id="section21">
@@ -476,7 +540,6 @@
     </section>
 
     
-
     <section id="section22">
 <h2>The Learning Rate</h2>
         <p>The learning rate \( \alpha \) is a critical hyperparameter in gradient descent. It controls how big of a step we take in the direction of the negative gradient.</p>
@@ -518,6 +581,8 @@
 
     <section id="section28">
         <p>Let's see what happens with different learning rates for our simple example \( C(\beta) = \beta^2 \) starting from \( \beta = 5 \). Let's start with a too small learning rate.</p>
+</br>
+
         <div class="interactive-placeholder">
     <canvas id="learningRateComparison1Canvas" width="800" height="500"></canvas>
     <script>
@@ -862,11 +927,15 @@
         });
     </script>
 </div>
+</br>
+
+<p>As you can see, Gradient descent will take tiny steps and converge very slowly, requiring many iterations.</p>
 <div class="continue-button" onclick="showNextSection(29)">Continue</div>
     </section>
 
     <section id="section29">
 <p>Let's see what happens with a good learning rate.</p>
+</br>
 
       <div class="interactive-placeholder">
     <canvas id="learningRateComparison2Canvas" width="800" height="500"></canvas>
@@ -1212,11 +1281,16 @@
         });
     </script>
 </div>
+</br>
+
+<p>Gradient Descent converges to 0, which is exactly what we want!</p>
 <div class="continue-button" onclick="showNextSection(30)">Continue</div>
     </section>
 
     <section id="section30">
 <p>Now let's see what happens with a too large learning rate.</p>
+</br>
+
       <div class="interactive-placeholder">
     <canvas id="learningRateComparison3Canvas" width="800" height="500"></canvas>
     <script>
@@ -1561,7 +1635,10 @@
         });
     </script>
 </div>
-        
+</br>
+
+        <p>The Gradient descent overshoots the minimum and bounces around.</p>
+
         <div class="continue-button" onclick="showNextSection(31)">Continue</div>
     </section>
 
@@ -1592,7 +1669,8 @@
         <div class="stop-and-think">
             <h3>Stop and Think</h3>
             <h4>Thinking about the mountain analogy we started with, what might represent a 'local minimum' that isn't the lowest possible point? What challenges might this present?</h4>
-            <button class="reveal-button" onclick="revealAnswer('stop-and-think-2')">Reveal</button>
+<p>Try to think of an answer yourself before you hit the reveal button.</p>            
+<button class="reveal-button" onclick="revealAnswer('stop-and-think-2')">Reveal</button>
             <p id="stop-and-think-2" style="display: none;">A local minimum is like a small valley or depression on the mountainside, but not the lowest valley. If you start nearby and follow the steepest downward path, you'll end up in this local valley rather than finding the deepest one. This represents a major challenge in optimization—gradient descent might get stuck in these suboptimal solutions because it only sees the local landscape, not the global picture. We'll explore this challenge more in later lessons.</p>
         </div>
         <div class="continue-button" onclick="showNextSection(35)">Continue</div>

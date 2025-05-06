@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Introduction to Gradient Descent</title>
+    <title>Lesson 1: Gradient Descent - The Big Idea: Why and How?</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -30,13 +30,13 @@
             color: #444;
             margin-bottom: 20px;
         }
-        ul, ol {
+        ul {
             padding-left: 20px;
         }
-        .image-placeholder, .interactive-placeholder, .continue-button, .vocab-section, .why-it-matters, .test-your-knowledge, .faq-section, .stop-and-think {
+        .image-placeholder, .interactive-placeholder, .continue-button, .vocab-section, .why-it-matters, .test-your-knowledge, .faq-section, .stop-and-think, .visual-aid-placeholder {
             text-align: left;
         }
-        .image-placeholder img, .interactive-placeholder img {
+        .image-placeholder img, .interactive-placeholder img, .visual-aid-placeholder img {
             max-width: 100%;
             height: auto;
             border-radius: 5px;
@@ -104,10 +104,10 @@
             cursor: pointer;
         }
         .test-your-knowledge {
-            background-color: #e6ffe6;
+            background-color: #e6ffe6; /* Light green background */
         }
         .test-your-knowledge h3 {
-            color: #28a745;
+            color: #28a745; /* Dark green heading */
             font-size: 0.75em;
             margin-bottom: 5px;
             margin-top: 5px;
@@ -126,7 +126,7 @@
             padding: 10px 20px;
             margin-top: 15px;
             color: #ffffff;
-            background-color: #28a745;
+            background-color: #28a745; /* Green background */
             border-radius: 5px;
             text-decoration: none;
             cursor: pointer;
@@ -134,10 +134,10 @@
             font-size: 1em;
         }
         .faq-section {
-            background-color: #fffbea;
+            background-color: #fffbea; /* Light yellow background */
         }
         .faq-section h3 {
-            color: #ffcc00;
+            color: #ffcc00; /* Bright yellow heading */
             font-size: 0.75em;
             margin-bottom: 5px;
             margin-top: 5px;
@@ -148,11 +148,42 @@
             margin-top: 10px;
             margin-bottom: 8px;
         }
-        canvas {
+        .math-explainer {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .math-step {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .math-step:last-child {
+            border-bottom: none;
+        }
+        .option {
+            margin-bottom: 10px;
+            padding: 10px;
             border: 1px solid #ddd;
-            display: block;
-            margin: 0 auto;
-            background-color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .option:hover {
+            background-color: #f5f5f5;
+        }
+        .option-explanation {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f0f8ff;
+            border-radius: 5px;
+        }
+        .correct {
+            border-color: #28a745;
+        }
+        .incorrect {
+            border-color: #dc3545;
         }
     </style>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -160,1555 +191,212 @@
 </head>
 <body>
     <section id="section1">
-<div class="image-placeholder">
-            <img src="images/ball.png?height=300&width=600" alt="Image shows a 3D surface representing a cost function with a ball rolling down from a high point to a minimum, illustrating the concept of gradient descent as finding the lowest point by moving in the direction of steepest descent.">
+        <div class="image-placeholder">
+            <img src="/placeholder.svg?height=300&width=600" alt="Conceptual image: A person cautiously descending a foggy hill, only able to see the immediate ground slope.">
         </div>
-        <h1>Introduction to Gradient Descent</h1>
-        <p>Imagine you're standing on a mountain in dense fog and want to reach the bottom as efficiently as possible. Without being able to see the entire landscape, how would you proceed? You might feel the ground around you and step in the direction where it slopes downward most steeply. After taking that step, you'd reassess and repeat until reaching the bottom. This intuitive approach mirrors how gradient descent works in machine learning—it helps algorithms find the minimum of a cost function by taking steps in the direction of steepest descent.</p>
+        <h1>Lesson 1: Gradient Descent - The Big Idea: Why and How?</h1>
+        <p>Imagine you're trying to train a machine learning model on a massive dataset – maybe millions of photos or customer records. Calculating the <em>absolute best</em> answer in one go often requires loading and processing <em>all</em> that data simultaneously. That can be incredibly slow, demand huge amounts of memory, or sometimes, it's just plain impossible!</p>
+        <p>So, how do we find good settings (parameters) for our model efficiently, even with enormous datasets? We need a clever approach. Enter <strong>Gradient Descent</strong>!</p>
         <div class="continue-button" onclick="showNextSection(2)">Continue</div>
     </section>
 
     <section id="section2">
-        <h2>Why We Need Gradient Descent</h2>
-        <p>When training machine learning models, we need to find the parameter values that minimize the error between our predictions and the actual data. For small datasets, we can often compute the optimal solution directly. However, as datasets grow larger, this direct approach becomes computationally expensive or even impossible.</p>
+        <h2>Why Not Just Calculate the Best Answer Directly?</h2>
+        <p>For some problems, like simpler linear regression, there's a mathematical formula (the 'least squares solution' or 'normal equation') that gives you the perfect answer directly. But this requires performing complex calculations involving your <em>entire</em> dataset, let's call it \(D\).</p>
+        <div class="visual-aid-placeholder">
+            <img src="/placeholder.svg?height=300&width=600" alt="Visual Aid: Simple diagram contrasting two paths. Path 1: 'Direct Calculation (Least Squares)' -> requires 'Entire Dataset D' -> 'Exact Solution β_optimal'. Path 2: 'Gradient Descent' -> uses 'Data (iteratively)' -> 'Approximated Solution β_learned'. Highlight that Path 1 struggles with 'Large D'.">
+        </div>
+        <p>As your dataset \(D\) grows, these direct calculations become computationally very expensive. Think matrix operations on millions of data points! It quickly becomes impractical.</p>
         <div class="continue-button" onclick="showNextSection(3)">Continue</div>
     </section>
 
     <section id="section3">
-        <p>Gradient descent provides an efficient alternative by iteratively refining our parameter estimates. Instead of calculating the exact solution using all data at once, we make incremental improvements by moving in the direction that reduces the error most rapidly.</p>
+        <p>Gradient Descent offers an alternative: it's an <strong>approximated learning method</strong>. It might not find the <em>absolute perfect</em> answer down to the last decimal place, but it can often get extremely close, much, much faster, especially with large datasets.</p>
         <div class="continue-button" onclick="showNextSection(4)">Continue</div>
     </section>
 
     <section id="section4">
-        <p>This approach is particularly valuable in today's world where we often work with massive datasets containing millions or even billions of data points.</p>
-<div class="continue-button" onclick="showNextSection(5)">Continue</div>
+        <h2>The Iterative Journey Downhill</h2>
+        <p>So, how does Gradient Descent work? Instead of a giant calculation, it takes an iterative approach. Think of finding the lowest point in a valley shrouded in thick fog.</p>
+        <div class="image-placeholder">
+            <img src="/placeholder.svg?height=300&width=600" alt="Animated GIF: A ball rolling down a simple curved slope (valley shape), taking discrete steps.">
+        </div>
+        <p>You can't see the bottom (the best parameters), but you can feel the slope right where you are standing. To get lower, you'd take a step in the steepest <em>downhill</em> direction.</p>
+        <div class="continue-button" onclick="showNextSection(5)">Continue</div>
     </section>
 
     <section id="section5">
-        <div class="why-it-matters">
-            <h3>Why It Matters</h3>
-            <p>Gradient descent makes machine learning practical for large-scale problems. Without efficient optimization methods like gradient descent, training complex models on large datasets would be computationally infeasible. It's the engine that powers most modern machine learning systems, from recommendation algorithms to image recognition.</p>
-        </div>
-<div class="continue-button" onclick="showNextSection(6)">Continue</div>
+        <p>Gradient Descent does exactly this, digitally:</p>
+        <ol>
+            <li><strong>Start Somewhere:</strong> Make an initial guess for your model's parameters (we often call this vector \(\beta_{start}\) or \(\theta_{start}\)). This could be random numbers, or just all zeros.</li>
+            <li><strong>Take a Step Downhill:</strong> Figure out which direction increases the 'error' or 'cost' the most (this direction is called the <strong>gradient</strong>). Then, take a small step in the <em>opposite</em> direction to reduce the error.</li>
+            <li><strong>Repeat:</strong> Keep taking small steps downhill, iteratively adjusting the parameters, until you're satisfied you're near the bottom.</li>
+        </ol>
+        <div class="continue-button" onclick="showNextSection(6)">Continue</div>
     </section>
 
     <section id="section6">
-<div class="vocab-section">
-            <h3>Build Your Vocab</h3>
-            <h4 class="vocab-term">Cost Function</h4>
-            <p>A function that measures how well a model's predictions match the actual data. In machine learning, we aim to minimize this function. Also called a loss function or objective function.</p>
+        <h2>Visualizing the Goal</h2>
+        <p>Let's visualize this for a simple case. Imagine our 'cost' (how bad our parameters are) depends on just one parameter, \(\beta\). We can plot this relationship.</p>
+        <div class="visual-aid-placeholder">
+            <img src="/placeholder.svg?height=300&width=600" alt="Visual Aid: Show the 1D convex cost curve from Slide 1. Label the axes 'Parameter (β)' and 'Cost c(β)'. Mark a point high up on the right side as 'β_start'. Mark the bottom of the curve as 'β_learned (Goal)'. Add arrows pointing downhill along the curve from β_start towards β_learned, representing the iterative steps.">
         </div>
+        <p>Here, the curve \(c(\beta)\) shows the cost for different values of our parameter \(\beta\). Our goal is to find the value of \(\beta\) at the bottom of this 'valley', which minimizes the cost. We start at some \(\beta_{start}\) and take steps downhill until we reach (or get very close to) \(\beta_{learned}\).</p>
         <div class="continue-button" onclick="showNextSection(7)">Continue</div>
     </section>
 
     <section id="section7">
-        <p>Let's understand how gradient descent works by breaking it down into simple steps.</p>
-        
-        <div class="continue-button" onclick="showNextSection(8)">Continue</div>
+        <h2>The Update Rule: Math Behind the Steps</h2>
+        <p>Okay, let's formalize that 'step downhill'. How do we calculate the next set of parameters (\(\beta_{new}\)) from the current ones (\(\beta_{old}\))? The core Gradient Descent update rule is surprisingly simple:</p>
+                <p>\[ \beta_{new} = \beta_{old} - \alpha \nabla_{\beta} C(\beta_{old}) \]</p>
+                <p>This is the heart of Gradient Descent. Let's break it down piece by piece.</p>
+<div class="continue-button" onclick="showNextSection(8)">Continue</div>
     </section>
 
     <section id="section8">
-        <p>At its core, gradient descent is a simple algorithm with three key steps:</p>
-        
-        <ol>
-            <li>Start with random parameter values.</li>
-            <li>Calculate the gradient (direction of steepest increase) of the cost function.</li>
-            <li>Update the parameters by moving in the opposite direction of the gradient.</li>
-        </ol>
-        <div class="continue-button" onclick="showNextSection(9)">Continue</div>
+       
+                    
+            
+          
+                <p>\[ \beta \]</p>
+                <p>This represents the vector of parameters (or coefficients) we are trying to learn for our model. \(\beta_{old}\) is our current guess, and \(\beta_{new}\) will be our improved guess after one step.</p>
+          
+            <div class="continue-button" onclick="showNextSection(9)">Continue</div>
     </section>
 
     <section id="section9">
-        <p>We repeat these steps until we reach a minimum or meet some stopping criteria. With each iteration, our parameters get closer to their optimal values, and our cost function decreases.</p>
-        <div class="continue-button" onclick="showNextSection(10)">Continue</div>
+         
+                <p>\[ C(\beta) \]</p>
+                <p>This is the <strong>Cost Function</strong>. It's a mathematical function that measures how 'wrong' our model's predictions are given the current parameters \(\beta\). Our goal is to find the \(\beta\) that makes \(C(\beta)\) as small as possible (minimize the cost).</p>
+          
+            
+           <div class="continue-button" onclick="showNextSection(10)">Continue</div>
     </section>
 
     <section id="section10">
-        <p>The fundamental update rule for gradient descent is:</p>
-        <p>\[ \beta = \beta - \alpha\nabla_\beta C(\beta) \]</p>
-        <p>Let's break down what each part means:</p>
-        <div class="continue-button" onclick="showNextSection(11)">Continue</div>
+                <p>\[ \nabla_{\beta} C(\beta) \]</p>
+                <p>This is the <strong>Gradient</strong> of the cost function with respect to the parameters \(\beta\). Think of it as a multi-dimensional slope. It's a vector that points in the direction where the cost function \(C(\beta)\) increases <em>fastest</em> from the current point \(\beta\). We calculate this gradient at our current position, \(\beta_{old}\).</p>
+        
+            <div class="continue-button" onclick="showNextSection(11)">Continue</div>
     </section>
 
     <section id="section11">
-        <ul>
-            <li>\( \beta \) represents our model parameters (coefficients in linear regression, weights in neural networks)</li>
-            <li>\( C(\beta) \) is our cost function that measures prediction error</li>
-            <li>\( \nabla_\beta C(\beta) \) is the gradient (vector of partial derivatives) of the cost function</li>
-            <li>\( \alpha \) is the learning rate that controls our step size</li>
-        </ul>
-        <div class="continue-button" onclick="showNextSection(12)">Continue</div>
+            
+                <p>\[ \alpha \]</p>
+                <p>This is the <strong>Learning Rate</strong>. It's a small positive number (e.g., 0.01, 0.005, 0.1) that we choose beforehand. It controls <em>how big</em> of a step we take in the downhill direction. It's crucial: too large, and we might overshoot the minimum; too small, and it might take ages to get there!</p>
+   
+            <div class="continue-button" onclick="showNextSection(12)">Continue</div>
     </section>
 
     <section id="section12">
-        <p>The gradient \( \nabla_\beta C(\beta) \) points in the direction of steepest increase of the cost function. Since we want to minimize the cost, we move in the opposite direction by subtracting the gradient (multiplied by the learning rate) from our current parameters.</p>
-<div class="continue-button" onclick="showNextSection(13)">Continue</div>
+     
+                <p>\[ - \alpha \nabla_{\beta} C(\beta_{old}) \]</p>
+                <p>This is the actual 'step' we take. We move in the direction <em>opposite</em> to the gradient (hence the minus sign – we want to go downhill, not uphill!), and the size of the step is determined by the gradient's magnitude and scaled by our chosen learning rate \(\alpha\).</p>
+       
+ 
+        <div class="continue-button" onclick="showNextSection(13)">Continue</div>
     </section>
 
     <section id="section13">
-        <div class="stop-and-think">
-            <h3>Stop and Think</h3>
-            <h4>Why do we multiply the gradient by a learning rate \( \alpha \) rather than just moving directly in the opposite direction of the gradient?</h4>
-<p>Try to think of an answer yourself before you hit the reveal button.</p>
-            <button class="reveal-button" onclick="revealAnswer('stop-and-think-1')">Reveal</button>
-            <p id="stop-and-think-1" style="display: none;">The learning rate controls how big of a step we take. If it's too large, we might overshoot the minimum and potentially diverge. If it's too small, we'll take too many iterations to reach the minimum. It's like controlling how cautiously you step down the mountain: too boldly and you might fall past the valley; too timidly and your journey takes forever.</p>
-        </div>
+        <p>So, in each iteration, we calculate the gradient based on our current parameters, scale it by the learning rate, subtract it from our current parameters, and voilà – we have our new, hopefully slightly better, parameters!</p>
         <div class="continue-button" onclick="showNextSection(14)">Continue</div>
     </section>
 
     <section id="section14">
-        <p>Let's see how this works with a simple example.</p>
+        <div class="vocab-section">
+            <h3>Build Your Vocab</h3>
+            <h4 class="vocab-term">Parameters (β or θ)</h4>
+            <p>The adjustable settings or coefficients of a machine learning model that are learned from data (e.g., the slope and intercept in linear regression).</p>
+            
+            <h4 class="vocab-term">Cost Function (C(β))</h4>
+            <p>A function that measures the difference between the model's predictions and the actual target values. The goal is to minimize this function.</p>
+            
+            <h4 class="vocab-term">Gradient (∇C)</h4>
+            <p>A vector of partial derivatives of the cost function with respect to each parameter. It points in the direction of the steepest ascent of the cost function.</p>
+            
+            <h4 class="vocab-term">Learning Rate (α)</h4>
+            <p>A hyperparameter (a setting chosen before learning starts) that controls the step size taken during each iteration of gradient descent.</p>
+            
+            <h4 class="vocab-term">Gradient Descent</h4>
+            <p>An iterative optimization algorithm used to find the minimum of a function (typically a cost function) by repeatedly taking steps in the opposite direction of the gradient.</p>
+        </div>
         
         <div class="continue-button" onclick="showNextSection(15)">Continue</div>
     </section>
 
     <section id="section15">
-        <p>Let's understand gradient descent through a concrete example. Imagine we have a simple cost function with a single parameter: \( C(\beta) = \beta^2 \). This is a parabola with its minimum at \( \beta = 0 \).</p>
-</br>
-
-<!-- Add this where you want to show just the parabola -->
-<div class="interactive-placeholder">
-    <canvas id="parabolaCanvas" width="700" height="400"></canvas>
-    <script>
-        // Immediately draw the parabola when this script runs
-        (function() {
-            // Get canvas and context
-            const canvas = document.getElementById('parabolaCanvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Canvas dimensions and margins
-            const margin = { top: 30, right: 30, bottom: 50, left: 60 };
-            const width = canvas.width - margin.left - margin.right;
-            const height = canvas.height - margin.top - margin.bottom;
-            
-            // Define the coordinate bounds for our visualization
-            const xMin = -6;
-            const xMax = 6;
-            const yMin = -1;
-            const yMax = 30;
-            
-            // Colors
-            const colors = {
-                blue: '#4C72B0',
-                gray: '#E0E0E0',
-                darkGray: '#444444'
-            };
-            
-            // Functions to convert from data coordinates to canvas pixels
-            function xToCanvas(x) {
-                return margin.left + width * (x - xMin) / (xMax - xMin);
-            }
-            
-            function yToCanvas(y) {
-                return margin.top + height * (1 - (y - yMin) / (yMax - yMin));
-            }
-            
-            // Clear canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw grid
-            ctx.strokeStyle = colors.gray;
-            ctx.lineWidth = 0.5;
-            
-            // Vertical grid lines
-            for (let x = Math.floor(xMin); x <= Math.ceil(xMax); x++) {
-                ctx.beginPath();
-                ctx.moveTo(xToCanvas(x), yToCanvas(yMin));
-                ctx.lineTo(xToCanvas(x), yToCanvas(yMax));
-                ctx.stroke();
-            }
-            
-            // Horizontal grid lines
-            for (let y = Math.floor(yMin); y <= Math.ceil(yMax); y += 5) {
-                ctx.beginPath();
-                ctx.moveTo(xToCanvas(xMin), yToCanvas(y));
-                ctx.lineTo(xToCanvas(xMax), yToCanvas(y));
-                ctx.stroke();
-            }
-            
-            // Draw axes
-            ctx.strokeStyle = colors.darkGray;
-            ctx.lineWidth = 2;
-            ctx.font = '12px Arial';
-            ctx.textAlign = 'center';
-            
-            // X-axis
-            ctx.beginPath();
-            ctx.moveTo(xToCanvas(xMin), yToCanvas(0));
-            ctx.lineTo(xToCanvas(xMax), yToCanvas(0));
-            ctx.stroke();
-            
-            // X-axis ticks and labels
-            ctx.fillStyle = colors.darkGray;
-            for (let x = Math.floor(xMin); x <= Math.ceil(xMax); x += 2) {
-                ctx.beginPath();
-                ctx.moveTo(xToCanvas(x), yToCanvas(0) - 5);
-                ctx.lineTo(xToCanvas(x), yToCanvas(0) + 5);
-                ctx.stroke();
-                
-                ctx.fillText(x.toString(), xToCanvas(x), yToCanvas(0) + 20);
-            }
-            
-            // X-axis label
-            ctx.fillText('Parameter (β)', xToCanvas((xMax + xMin) / 2), yToCanvas(yMin) + 35);
-            
-            // Y-axis
-            ctx.beginPath();
-            ctx.moveTo(xToCanvas(0), yToCanvas(yMin));
-            ctx.lineTo(xToCanvas(0), yToCanvas(yMax));
-            ctx.stroke();
-            
-            // Y-axis ticks and labels
-            ctx.textAlign = 'right';
-            for (let y = 0; y <= yMax; y += 5) {
-                ctx.beginPath();
-                ctx.moveTo(xToCanvas(0) - 5, yToCanvas(y));
-                ctx.lineTo(xToCanvas(0) + 5, yToCanvas(y));
-                ctx.stroke();
-                
-                ctx.fillText(y.toString(), xToCanvas(0) - 10, yToCanvas(y) + 4);
-            }
-            
-            // Y-axis label
-            ctx.save();
-            ctx.translate(xToCanvas(xMin) - 35, yToCanvas((yMax + yMin) / 2));
-            ctx.rotate(-Math.PI / 2);
-            ctx.textAlign = 'center';
-            ctx.fillText('Cost: C(β)', 0, 0);
-            ctx.restore();
-            
-            // Draw the cost function curve
-            ctx.strokeStyle = colors.blue;
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            
-            for (let x = xMin; x <= xMax; x += 0.1) {
-                const y = x * x; // Our cost function is C(β) = β²
-                
-                if (x === xMin) {
-                    ctx.moveTo(xToCanvas(x), yToCanvas(y));
-                } else {
-                    ctx.lineTo(xToCanvas(x), yToCanvas(y));
-                }
-            }
-            
-            ctx.stroke();
-            
-            // Label for the cost function
-            ctx.fillStyle = colors.blue;
-            ctx.font = 'bold 14px Arial';
-            ctx.textAlign = 'left';
-            ctx.fillText('Cost Function: C(β) = β²', xToCanvas(-5.5), yToCanvas(27));
-        })();
-    </script>
-</div>
-</br>
-        <div class="continue-button" onclick="showNextSection(16)">Continue</div>
-    </section>
-
-    <section id="section16">
-        <p>For this function, the gradient (derivative) is \( \nabla_\beta C(\beta) = 2\beta \). Let's start with \( \beta = 5 \) and use a learning rate \( \alpha = 0.1 \) to see how gradient descent finds the minimum.</p>
+        <h2>Exploring the Descent</h2>
+        <p>Let's play with this idea. Use the interactive element below to see how the starting point and learning rate affect the descent on our simple cost curve.</p>
+        
+        <div class="interactive-placeholder">
+            <img src="/placeholder.svg?height=300&width=600" alt="Interactive Element: Convex Cost Function Explorer. Description: Display the 1D convex cost curve $c(\\beta)$ vs $\\beta$. Provide a slider or clickable input for the user to set the 'Starting Beta' (β_start). Provide another slider for the 'Learning Rate' (α) with values ranging from very small (e.g., 0.01) to too large (e.g., 1.5 based on the curve's scale). Add a 'Start Descent' button. When clicked, animate points moving down the curve according to the update rule β := β - α * (slope at β). Show the value of β and C(β) at each step. If α is too large, show the animation overshooting the minimum or diverging (going up). If α is small, show slow convergence. If α is 'just right', show convergence to the minimum.">
+        </div>
         <div class="continue-button" onclick="showNextSection(17)">Continue</div>
     </section>
 
     <section id="section17">
-        <p><strong>Iteration 1:</strong></p>
-        <ol>
-            <li>Calculate gradient: \( \nabla_\beta C(\beta) = 2 \times 5 = 10 \)</li>
-            <li>Update rule: \( \beta = 5 - 0.1 \times 10 = 5 - 1 = 4 \)</li>
-        </ol>
-        <p><strong>Iteration 2:</strong></p>
-        <ol>
-            <li>Calculate gradient: \( \nabla_\beta C(\beta) = 2 \times 4 = 8 \)</li>
-            <li>Update rule: \( \beta = 4 - 0.1 \times 8 = 4 - 0.8 = 3.2 \)</li>
-        </ol>
-</br>
-<p>Great, isn't it? Let's continue a few more iterations:</p>
+        <p>Did you see how a tiny learning rate takes many small steps? And how a huge learning rate can cause the process to jump around wildly or even move <em>away</em> from the minimum? Finding a good learning rate is often key!</p>
         <div class="continue-button" onclick="showNextSection(18)">Continue</div>
     </section>
 
     <section id="section18">
-        
-        <p><strong>Iteration 3:</strong></p>
-        <ol>
-            <li>Gradient: \( 2 \times 3.2 = 6.4 \)</li>
-            <li>Update: \( \beta = 3.2 - 0.1 \times 6.4 = 3.2 - 0.64 = 2.56 \)</li>
-        </ol>
-        <p><strong>Iteration 4:</strong></p>
-        <ol>
-            <li>Gradient: \( 2 \times 2.56 = 5.12 \)</li>
-            <li>Update: \( \beta = 2.56 - 0.1 \times 5.12 = 2.56 - 0.512 = 2.048 \)</li>
-        </ol>
-</br>
-
-<div class="interactive-placeholder">
-    <canvas id="gdCanvas4Iterations" width="700" height="400"></canvas>
-    <script>
-        // Initialize first visualization when this section is shown
-        document.getElementById('section18').addEventListener('transitionend', function(e) {
-            if (e.target === this && this.style.opacity == 1) {
-                initGradientDescent4Iterations('gdCanvas4Iterations');
-            }
-        });
-    </script>
-</div>
-</br>
-
-<p>As you can see, with each iteration, \( \beta \) gets closer to 0, which is the minimum of our function \( C(\beta) = \beta^2 \). The parameter updates gradually become smaller as we approach the minimum because the gradient becomes smaller (we're on a less steep part of the parabola).</p>
-        <div class="continue-button" onclick="showNextSection(19)">Continue</div>
+        <div class="test-your-knowledge">
+            <h3>Test Your Knowledge</h3>
+            <h4>Based on the update rule \(\beta_{new} = \beta_{old} - \alpha \nabla_{\beta} C(\beta_{old})\), what happens if the learning rate \(\alpha\) is set to 0?</h4>
+            
+            <div class="option" onclick="checkAnswer(this, false)">
+                The parameters \(\beta\) update very quickly.
+                <div class="option-explanation">If α=0, the entire update step (- α * gradient) becomes zero.</div>
+            </div>
+            
+            <div class="option" onclick="checkAnswer(this, true)">
+                The parameters \(\beta\) do not change.
+                <div class="option-explanation">Correct! If α=0, then β_new = β_old - 0 * gradient = β_old. No learning occurs.</div>
+            </div>
+            
+            <div class="option" onclick="checkAnswer(this, false)">
+                The algorithm finds the minimum in one step.
+                <div class="option-explanation">Finding the minimum requires moving; a step size of zero means no movement.</div>
+            </div>
+            
+            <div class="option" onclick="checkAnswer(this, false)">
+                The algorithm moves in the direction of the gradient.
+                <div class="option-explanation">The algorithm moves opposite the gradient, but if α=0, the step size is zero regardless of the gradient.</div>
+            </div>
+        </div>
+                <div class="continue-button" onclick="showNextSection(19)">Continue</div>
     </section>
 
-    
-
-<section id="section19">
-    <p>If we would calculate a fifth iteration of gradient descent, what do you get for the updated parameter value?</p>
-    
-    <div class="quiz-options">
-        <button class="quiz-button" onclick="checkQuizAnswer('correct')">1.6384</button>
-        <button class="quiz-button" onclick="checkQuizAnswer('lower')">2</button>
-        <button class="quiz-button" onclick="checkQuizAnswer('higher')">1.267</button>
-    </div>
-    
-    <p id="quiz-feedback" style="display: none;"></p>
-    
-    <div class="continue-button" onclick="showNextSection(20)">Continue</div>
-    
-    <style>
-        .quiz-options {
-            margin: 20px 0;
-        }
-        .quiz-button {
-            background-color: white;
-            border: 2px solid black;
-            border-radius: 25px;
-            padding: 10px 30px;
-            margin-right: 15px;
-            margin-bottom: 15px;
-            font-size: 1em;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            display: inline-block;
-        }
-        .quiz-button:hover {
-            background-color: #f0f0f0;
-        }
-        /* Removed colored feedback styles */
-    </style>
-    
-    <script>
-        function checkQuizAnswer(answer) {
-            const feedbackDiv = document.getElementById('quiz-feedback');
-            feedbackDiv.style.display = 'block';
-            feedbackDiv.style.marginBottom = '20px';
-            feedbackDiv.style.lineHeight = '1.6';
-            feedbackDiv.style.color = '#444';
-            
-            if (answer === 'correct') {
-                feedbackDiv.innerHTML = "Exactly, well done! After iteration 4, β = 2.048. In iteration 5, the gradient is 2 × 2.048 = 4.096, so the update is 2.048 - 0.1 × 4.096 = 1.6384.";
-            } else if (answer === 'lower') {
-                feedbackDiv.innerHTML = "That's too high. After iteration 4, β = 2.048. The gradient at this point is 2 × 2.048 = 4.096, so the update should be 2.048 - 0.1 × 4.096 = 1.6384.";
-            } else if (answer === 'higher') {
-                feedbackDiv.innerHTML = "That's too low. After iteration 4, β = 2.048. The gradient at this point is 2 × 2.048 = 4.096, so the update should be 2.048 - 0.1 × 4.096 = 1.6384.";
-            }
-        }
-    </script>
-</section>
+    <section id="section19">
+<div class="why-it-matters">
+            <h3>Why It Matters</h3>
+            <p>Gradient Descent provides a general and scalable way to optimize the parameters of many machine learning models, especially when datasets are too large for direct calculation methods. It's the foundation for training many algorithms, from simple linear regression to complex deep neural networks.</p>
+        </div>
+        <div class="continue-button" onclick="showNextSection(20)">Continue</div>
+    </section>
 
     <section id="section20">
-        <p>If we continued this process, \( \beta \) would eventually converge to 0, which is exactly what we want! This illustrates how gradient descent iteratively finds the minimum of a function.</p>
-</br>
+<div class="faq-section">
+            <h3>Frequently Asked Questions</h3>
+            <h4>Does it matter where I start (β_start)?</h4>
+            <p>For simple 'bowl-shaped' (convex) cost functions like the one we visualized, you'll eventually reach the same minimum regardless of where you start (though it might take longer from further away). However, for more complex, bumpy cost functions (which we'll see in Lesson 3), the starting point can determine <em>which</em> minimum you fall into!</p>
+        </div>
 
-        <div class="interactive-placeholder">
-    <canvas id="gdCanvasUntilMin" width="700" height="400"></canvas>
-    <script>
-        // Initialize second visualization when this section is shown
-        document.getElementById('section20').addEventListener('transitionend', function(e) {
-            if (e.target === this && this.style.opacity == 1) {
-                initGradientDescentUntilMin('gdCanvasUntilMin');
-            }
-        });
-    </script>
-</div>
-</br>
-
-      <div class="continue-button" onclick="showNextSection(21)">Continue</div>
+        <div class="continue-button" onclick="showNextSection(21)">Continue</div>
     </section>
 
     <section id="section21">
-        <p>While this example used a simple function with one parameter, the same principles apply to more complex cost functions with multiple parameters, like those found in real machine learning problems.</p>
-<div class="continue-button" onclick="showNextSection(22)">Continue</div>
-    </section>
-
+        <h2>Next Steps</h2>
+        
+        
+        
+     
+        <p>We've grasped the core concept: start somewhere, find the downhill direction (gradient), take a step opposite to it (scaled by the learning rate), and repeat.</p>
+        
+        <p>But how do we <em>actually calculate</em> that gradient \(\nabla_{\beta} C(\beta)\) for a specific model like linear regression? That's exactly what we'll dive into in the next lesson!</p>
+        
     
-    <section id="section22">
-<h2>The Learning Rate</h2>
-        <p>The learning rate \( \alpha \) is a critical hyperparameter in gradient descent. It controls how big of a step we take in the direction of the negative gradient.</p>
-        <div class="continue-button" onclick="showNextSection(23)">Continue</div>
     </section>
-
-    <section id="section23">
-        <p>Choosing an appropriate learning rate is crucial for successful optimization:</p>
-        <div class="continue-button" onclick="showNextSection(24)">Continue</div>
-    </section>
-
-    <section id="section24">
-        <ul>
-            <li>If \( \alpha \) is too small: Gradient descent will take tiny steps and converge very slowly, requiring many iterations.</li>
-            <li>If \( \alpha \) is too large: Gradient descent might overshoot the minimum, bounce around, or even diverge completely.</li>
-        </ul>
-        
-        <div class="continue-button" onclick="showNextSection(25)">Continue</div>
-    </section>
-
-    <section id="section25">
-        <p>Think of the learning rate as controlling how cautiously you step down the mountain. With tiny steps, you'll eventually reach the bottom but might take all day. With giant leaps, you might jump right past the valley or even up the opposite slope!</p>
-        <div class="continue-button" onclick="showNextSection(26)">Continue</div>
-    </section>
-
-    <section id="section26">
-        <p>In practice, finding a good learning rate often involves experimentation. Some advanced techniques even adjust the learning rate during training based on how the optimization is progressing.</p>
-<div class="continue-button" onclick="showNextSection(27)">Continue</div>
-    </section>
-
-    <section id="section27">
-        <div class="vocab-section">
-            <h3>Build Your Vocab</h3>
-            <h4 class="vocab-term">Hyperparameter</h4>
-            <p>A parameter that is set before the learning process begins, rather than learned during training. The learning rate is a hyperparameter that controls how much the model parameters change in response to the estimated error.</p>
-        </div>
-        <div class="continue-button" onclick="showNextSection(28)">Continue</div>
-    </section>
-
-    <section id="section28">
-        <p>Let's see what happens with different learning rates for our simple example \( C(\beta) = \beta^2 \) starting from \( \beta = 5 \). Let's start with a too small learning rate.</p>
-</br>
-
-        <div class="interactive-placeholder">
-    <canvas id="learningRateComparison1Canvas" width="800" height="500"></canvas>
-    <script>
-        // Define the visualization function but don't start it immediately
-        function initLearningRateComparison1() {
-            // Get canvas and context
-            const canvas = document.getElementById('learningRateComparison1Canvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Parameters for gradient descent
-            const initialBeta = 5;
-            const learningRates = [0.01]; // small, good, large
-            const numIterations = 50; // More iterations to show differences
-            const maxFrames = 100; // More frames for slower animation
-            
-            // Calculate gradient descent paths for different learning rates
-            function calculateGradientDescentPaths() {
-                const allPaths = [];
-                
-                for (const alpha of learningRates) {
-                    const betaValues = [initialBeta];
-                    const costValues = [initialBeta * initialBeta];
-                    
-                    let beta = initialBeta;
-                    for (let i = 0; i < numIterations; i++) {
-                        const gradient = 2 * beta; // Derivative of β²
-                        beta = beta - alpha * gradient;
-                        
-                        // For large learning rates, check for divergence
-                        if (Math.abs(beta) > 10) {
-                            break; // Stop if diverging
-                        }
-                        
-                        betaValues.push(beta);
-                        costValues.push(beta * beta);
-                    }
-                    
-                    allPaths.push({ betaValues, costValues });
-                }
-                
-                return allPaths;
-            }
-            
-            // Calculate all paths
-            const allPaths = calculateGradientDescentPaths();
-            
-            // Canvas dimensions and margins
-            const margin = { top: 40, right: 140, bottom: 60, left: 70 };
-            const width = canvas.width - margin.left - margin.right;
-            const height = canvas.height - margin.top - margin.bottom;
-            
-            // Define the coordinate bounds for our visualization
-            const xMin = -6;
-            const xMax = 6;
-            const yMin = -1;
-            const yMax = 30;
-            
-            // Colors
-            const colors = {
-                blue: '#4C72B0',
-                red: '#C44E52',
-                green: '#55A868',
-                purple: '#8172B3',
-                orange: '#CCB974',
-                gray: '#E0E0E0',
-                darkGray: '#444444'
-            };
-            
-            // Path colors
-            const pathColors = [colors.purple, colors.green, colors.red];
-            
-            // Functions to convert from data coordinates to canvas pixels
-            function xToCanvas(x) {
-                return margin.left + width * (x - xMin) / (xMax - xMin);
-            }
-            
-            function yToCanvas(y) {
-                return margin.top + height * (1 - (y - yMin) / (yMax - yMin));
-            }
-            
-            // Current frame for animation
-            let currentFrame = 0;
-            let animationId = null;
-            
-            // Draw the visualization
-            function draw() {
-                // Clear canvas
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                // Draw grid
-                drawGrid();
-                
-                // Draw axes
-                drawAxes();
-                
-                // Draw the parabola (cost function)
-                drawCostFunction();
-                
-                // Draw gradient descent paths
-                drawPaths();
-                
-                // Draw legend
-                drawLegend();
-            }
-            
-            // Draw a light grid
-            function drawGrid() {
-                ctx.strokeStyle = colors.gray;
-                ctx.lineWidth = 0.5;
-                
-                // Vertical grid lines
-                for (let x = Math.floor(xMin); x <= Math.ceil(xMax); x++) {
-                    ctx.beginPath();
-                    ctx.moveTo(xToCanvas(x), yToCanvas(yMin));
-                    ctx.lineTo(xToCanvas(x), yToCanvas(yMax));
-                    ctx.stroke();
-                }
-                
-                // Horizontal grid lines
-                for (let y = Math.floor(yMin); y <= Math.ceil(yMax); y += 5) {
-                    ctx.beginPath();
-                    ctx.moveTo(xToCanvas(xMin), yToCanvas(y));
-                    ctx.lineTo(xToCanvas(xMax), yToCanvas(y));
-                    ctx.stroke();
-                }
-            }
-            
-            // Draw x and y axes
-            function drawAxes() {
-                ctx.strokeStyle = colors.darkGray;
-                ctx.lineWidth = 2;
-                ctx.font = '12px Arial';
-                ctx.textAlign = 'center';
-                
-                // X-axis
-                ctx.beginPath();
-                ctx.moveTo(xToCanvas(xMin), yToCanvas(0));
-                ctx.lineTo(xToCanvas(xMax), yToCanvas(0));
-                ctx.stroke();
-                
-                // X-axis ticks and labels
-                ctx.fillStyle = colors.darkGray;
-                for (let x = Math.floor(xMin); x <= Math.ceil(xMax); x += 2) {
-                    ctx.beginPath();
-                    ctx.moveTo(xToCanvas(x), yToCanvas(0) - 5);
-                    ctx.lineTo(xToCanvas(x), yToCanvas(0) + 5);
-                    ctx.stroke();
-                    
-                    ctx.fillText(x.toString(), xToCanvas(x), yToCanvas(0) + 20);
-                }
-                
-                // X-axis label
-                ctx.fillText('Parameter (β)', xToCanvas((xMax + xMin) / 2), yToCanvas(yMin) + 35);
-                
-                // Y-axis
-                ctx.beginPath();
-                ctx.moveTo(xToCanvas(0), yToCanvas(yMin));
-                ctx.lineTo(xToCanvas(0), yToCanvas(yMax));
-                ctx.stroke();
-                
-                // Y-axis ticks and labels
-                ctx.textAlign = 'right';
-                for (let y = 0; y <= yMax; y += 5) {
-                    ctx.beginPath();
-                    ctx.moveTo(xToCanvas(0) - 5, yToCanvas(y));
-                    ctx.lineTo(xToCanvas(0) + 5, yToCanvas(y));
-                    ctx.stroke();
-                    
-                    ctx.fillText(y.toString(), xToCanvas(0) - 10, yToCanvas(y) + 4);
-                }
-                
-                // Y-axis label
-                ctx.save();
-                ctx.translate(xToCanvas(xMin) - 35, yToCanvas((yMax + yMin) / 2));
-                ctx.rotate(-Math.PI / 2);
-                ctx.textAlign = 'center';
-                ctx.fillText('Cost: C(β)', 0, 0);
-                ctx.restore();
-            }
-            
-            // Draw the cost function curve
-            function drawCostFunction() {
-                ctx.strokeStyle = colors.blue;
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                
-                for (let x = xMin; x <= xMax; x += 0.1) {
-                    const y = x * x; // Our cost function is C(β) = β²
-                    
-                    if (x === xMin) {
-                        ctx.moveTo(xToCanvas(x), yToCanvas(y));
-                    } else {
-                        ctx.lineTo(xToCanvas(x), yToCanvas(y));
-                    }
-                }
-                
-                ctx.stroke();
-                
-                // Label for the cost function
-                ctx.fillStyle = colors.blue;
-                ctx.font = 'bold 14px Arial';
-                ctx.textAlign = 'left';
-                ctx.fillText('Cost Function: C(β) = β²', xToCanvas(-5.5), yToCanvas(27));
-            }
-            
-            // Draw the gradient descent paths
-            function drawPaths() {
-                for (let pathIdx = 0; pathIdx < allPaths.length; pathIdx++) {
-                    const { betaValues, costValues } = allPaths[pathIdx];
-                    const color = pathColors[pathIdx];
-                    
-                    // Calculate number of points to show at current animation frame
-                    const maxPoints = Math.min(
-                        betaValues.length,
-                        Math.ceil((currentFrame / maxFrames) * betaValues.length)
-                    );
-                    
-                    // Path line
-                    ctx.strokeStyle = color;
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    
-                    for (let i = 0; i < maxPoints; i++) {
-                        const x = betaValues[i];
-                        const y = costValues[i];
-                        
-                        if (i === 0) {
-                            ctx.moveTo(xToCanvas(x), yToCanvas(y));
-                        } else {
-                            ctx.lineTo(xToCanvas(x), yToCanvas(y));
-                        }
-                    }
-                    
-                    ctx.stroke();
-                    
-                    // Draw points
-                    for (let i = 0; i < maxPoints; i++) {
-                        const x = betaValues[i];
-                        const y = costValues[i];
-                        
-                        // Draw point
-                        ctx.fillStyle = color;
-                        ctx.beginPath();
-                        ctx.arc(xToCanvas(x), yToCanvas(y), 4, 0, 2 * Math.PI);
-                        ctx.fill();
-                        
-                        // Draw label for first and last point of each path
-                        if (i === 0 || i === maxPoints - 1) {
-                            ctx.fillStyle = colors.darkGray;
-                            ctx.font = '10px Arial';
-                            ctx.textAlign = 'left';
-                            ctx.fillText(`β=${x.toFixed(2)}`, xToCanvas(x) + 10, yToCanvas(y) - 5);
-                        }
-                    }
-                }
-            }
-            
-            // Draw legend
-            function drawLegend() {
-                const legendX = xToCanvas(xMax) + 10;
-                const legendY = margin.top + 20;
-                const lineLength = 20;
-                const spacing = 25;
-                
-                ctx.font = 'bold 12px Arial';
-                ctx.textAlign = 'left';
-                ctx.fillStyle = colors.darkGray;
-                ctx.fillText('Learning Rates:', legendX, legendY);
-                
-                for (let i = 0; i < learningRates.length; i++) {
-                    const y = legendY + (i + 1) * spacing;
-                    
-                    // Draw line
-                    ctx.strokeStyle = pathColors[i];
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.moveTo(legendX, y);
-                    ctx.lineTo(legendX + lineLength, y);
-                    ctx.stroke();
-                    
-                    // Draw point
-                    ctx.fillStyle = pathColors[i];
-                    ctx.beginPath();
-                    ctx.arc(legendX + lineLength/2, y, 4, 0, 2 * Math.PI);
-                    ctx.fill();
-                    
-                    // Draw label
-                    ctx.fillStyle = colors.darkGray;
-                    ctx.textAlign = 'left';
-                    
-                    let label;
-                    if (i === 0) {
-                        label = `α=${learningRates[i]} (too small)`;
-                    } else if (i === 1) {
-                        label = `α=${learningRates[i]} (good)`;
-                    } else {
-                        label = `α=${learningRates[i]} (too large)`;
-                    }
-                    
-                    ctx.fillText(label, legendX + lineLength + 5, y + 4);
-                }
-            }
-            
-            // Animation function
-            function animate() {
-                currentFrame = (currentFrame + 1) % (maxFrames + 30); // Extra frames for pause
-                
-                // Draw the current frame
-                draw();
-                
-                // Continue animation
-                animationId = setTimeout(animate, 200); // Slower animation speed (200ms between frames)
-            }
-            
-            // Initial draw to show the canvas with the parabola
-            draw();
-            
-            // Start animation
-            animate();
-        }
-        
-        // Wait for section 28 to be displayed before starting the animation
-        document.addEventListener('DOMContentLoaded', function() {
-            // First draw the initial state
-            const canvas = document.getElementById('learningRateComparison1Canvas');
-            const ctx = canvas.getContext('2d');
-            ctx.font = '14px Arial';
-            ctx.fillStyle = '#444444';
-            ctx.textAlign = 'center';
-            ctx.fillText('Visualization will start when this section is displayed', canvas.width/2, canvas.height/2);
-            
-            // Add an event listener to section 28
-            const section28 = document.getElementById('section28');
-            if (section28) {
-                section28.addEventListener('transitionend', function(e) {
-                    if (e.target === this && this.style.opacity == 1) {
-                        // Section 28 is now visible, start the animation
-                        initLearningRateComparison1();
-                    }
-                });
-            }
-        });
-    </script>
-</div>
-</br>
-
-<p>As you can see, Gradient descent will take tiny steps and converge very slowly, requiring many iterations.</p>
-<div class="continue-button" onclick="showNextSection(29)">Continue</div>
-    </section>
-
-    <section id="section29">
-<p>Let's see what happens with a good learning rate.</p>
-</br>
-
-      <div class="interactive-placeholder">
-    <canvas id="learningRateComparison2Canvas" width="800" height="500"></canvas>
-    <script>
-        // Define the visualization function but don't start it immediately
-        function initLearningRateComparison2() {
-            // Get canvas and context
-            const canvas = document.getElementById('learningRateComparison2Canvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Parameters for gradient descent
-            const initialBeta = 5;
-            const learningRates = [0.1]; // small, good, large
-            const numIterations = 50; // More iterations to show differences
-            const maxFrames = 100; // More frames for slower animation
-            
-            // Calculate gradient descent paths for different learning rates
-            function calculateGradientDescentPaths() {
-                const allPaths = [];
-                
-                for (const alpha of learningRates) {
-                    const betaValues = [initialBeta];
-                    const costValues = [initialBeta * initialBeta];
-                    
-                    let beta = initialBeta;
-                    for (let i = 0; i < numIterations; i++) {
-                        const gradient = 2 * beta; // Derivative of β²
-                        beta = beta - alpha * gradient;
-                        
-                        // For large learning rates, check for divergence
-                        if (Math.abs(beta) > 10) {
-                            break; // Stop if diverging
-                        }
-                        
-                        betaValues.push(beta);
-                        costValues.push(beta * beta);
-                    }
-                    
-                    allPaths.push({ betaValues, costValues });
-                }
-                
-                return allPaths;
-            }
-            
-            // Calculate all paths
-            const allPaths = calculateGradientDescentPaths();
-            
-            // Canvas dimensions and margins
-            const margin = { top: 40, right: 140, bottom: 60, left: 70 };
-            const width = canvas.width - margin.left - margin.right;
-            const height = canvas.height - margin.top - margin.bottom;
-            
-            // Define the coordinate bounds for our visualization
-            const xMin = -6;
-            const xMax = 6;
-            const yMin = -1;
-            const yMax = 30;
-            
-            // Colors
-            const colors = {
-                blue: '#4C72B0',
-                red: '#C44E52',
-                green: '#55A868',
-                purple: '#8172B3',
-                orange: '#CCB974',
-                gray: '#E0E0E0',
-                darkGray: '#444444'
-            };
-            
-            // Path colors
-            const pathColors = [colors.purple, colors.green, colors.red];
-            
-            // Functions to convert from data coordinates to canvas pixels
-            function xToCanvas(x) {
-                return margin.left + width * (x - xMin) / (xMax - xMin);
-            }
-            
-            function yToCanvas(y) {
-                return margin.top + height * (1 - (y - yMin) / (yMax - yMin));
-            }
-            
-            // Current frame for animation
-            let currentFrame = 0;
-            let animationId = null;
-            
-            // Draw the visualization
-            function draw() {
-                // Clear canvas
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                // Draw grid
-                drawGrid();
-                
-                // Draw axes
-                drawAxes();
-                
-                // Draw the parabola (cost function)
-                drawCostFunction();
-                
-                // Draw gradient descent paths
-                drawPaths();
-                
-                // Draw legend
-                drawLegend();
-            }
-            
-            // Draw a light grid
-            function drawGrid() {
-                ctx.strokeStyle = colors.gray;
-                ctx.lineWidth = 0.5;
-                
-                // Vertical grid lines
-                for (let x = Math.floor(xMin); x <= Math.ceil(xMax); x++) {
-                    ctx.beginPath();
-                    ctx.moveTo(xToCanvas(x), yToCanvas(yMin));
-                    ctx.lineTo(xToCanvas(x), yToCanvas(yMax));
-                    ctx.stroke();
-                }
-                
-                // Horizontal grid lines
-                for (let y = Math.floor(yMin); y <= Math.ceil(yMax); y += 5) {
-                    ctx.beginPath();
-                    ctx.moveTo(xToCanvas(xMin), yToCanvas(y));
-                    ctx.lineTo(xToCanvas(xMax), yToCanvas(y));
-                    ctx.stroke();
-                }
-            }
-            
-            // Draw x and y axes
-            function drawAxes() {
-                ctx.strokeStyle = colors.darkGray;
-                ctx.lineWidth = 2;
-                ctx.font = '12px Arial';
-                ctx.textAlign = 'center';
-                
-                // X-axis
-                ctx.beginPath();
-                ctx.moveTo(xToCanvas(xMin), yToCanvas(0));
-                ctx.lineTo(xToCanvas(xMax), yToCanvas(0));
-                ctx.stroke();
-                
-                // X-axis ticks and labels
-                ctx.fillStyle = colors.darkGray;
-                for (let x = Math.floor(xMin); x <= Math.ceil(xMax); x += 2) {
-                    ctx.beginPath();
-                    ctx.moveTo(xToCanvas(x), yToCanvas(0) - 5);
-                    ctx.lineTo(xToCanvas(x), yToCanvas(0) + 5);
-                    ctx.stroke();
-                    
-                    ctx.fillText(x.toString(), xToCanvas(x), yToCanvas(0) + 20);
-                }
-                
-                // X-axis label
-                ctx.fillText('Parameter (β)', xToCanvas((xMax + xMin) / 2), yToCanvas(yMin) + 35);
-                
-                // Y-axis
-                ctx.beginPath();
-                ctx.moveTo(xToCanvas(0), yToCanvas(yMin));
-                ctx.lineTo(xToCanvas(0), yToCanvas(yMax));
-                ctx.stroke();
-                
-                // Y-axis ticks and labels
-                ctx.textAlign = 'right';
-                for (let y = 0; y <= yMax; y += 5) {
-                    ctx.beginPath();
-                    ctx.moveTo(xToCanvas(0) - 5, yToCanvas(y));
-                    ctx.lineTo(xToCanvas(0) + 5, yToCanvas(y));
-                    ctx.stroke();
-                    
-                    ctx.fillText(y.toString(), xToCanvas(0) - 10, yToCanvas(y) + 4);
-                }
-                
-                // Y-axis label
-                ctx.save();
-                ctx.translate(xToCanvas(xMin) - 35, yToCanvas((yMax + yMin) / 2));
-                ctx.rotate(-Math.PI / 2);
-                ctx.textAlign = 'center';
-                ctx.fillText('Cost: C(β)', 0, 0);
-                ctx.restore();
-            }
-            
-            // Draw the cost function curve
-            function drawCostFunction() {
-                ctx.strokeStyle = colors.blue;
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                
-                for (let x = xMin; x <= xMax; x += 0.1) {
-                    const y = x * x; // Our cost function is C(β) = β²
-                    
-                    if (x === xMin) {
-                        ctx.moveTo(xToCanvas(x), yToCanvas(y));
-                    } else {
-                        ctx.lineTo(xToCanvas(x), yToCanvas(y));
-                    }
-                }
-                
-                ctx.stroke();
-                
-                // Label for the cost function
-                ctx.fillStyle = colors.blue;
-                ctx.font = 'bold 14px Arial';
-                ctx.textAlign = 'left';
-                ctx.fillText('Cost Function: C(β) = β²', xToCanvas(-5.5), yToCanvas(27));
-            }
-            
-            // Draw the gradient descent paths
-            function drawPaths() {
-                for (let pathIdx = 0; pathIdx < allPaths.length; pathIdx++) {
-                    const { betaValues, costValues } = allPaths[pathIdx];
-                    const color = pathColors[pathIdx];
-                    
-                    // Calculate number of points to show at current animation frame
-                    const maxPoints = Math.min(
-                        betaValues.length,
-                        Math.ceil((currentFrame / maxFrames) * betaValues.length)
-                    );
-                    
-                    // Path line
-                    ctx.strokeStyle = color;
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    
-                    for (let i = 0; i < maxPoints; i++) {
-                        const x = betaValues[i];
-                        const y = costValues[i];
-                        
-                        if (i === 0) {
-                            ctx.moveTo(xToCanvas(x), yToCanvas(y));
-                        } else {
-                            ctx.lineTo(xToCanvas(x), yToCanvas(y));
-                        }
-                    }
-                    
-                    ctx.stroke();
-                    
-                    // Draw points
-                    for (let i = 0; i < maxPoints; i++) {
-                        const x = betaValues[i];
-                        const y = costValues[i];
-                        
-                        // Draw point
-                        ctx.fillStyle = color;
-                        ctx.beginPath();
-                        ctx.arc(xToCanvas(x), yToCanvas(y), 4, 0, 2 * Math.PI);
-                        ctx.fill();
-                        
-                        // Draw label for first and last point of each path
-                        if (i === 0 || i === maxPoints - 1) {
-                            ctx.fillStyle = colors.darkGray;
-                            ctx.font = '10px Arial';
-                            ctx.textAlign = 'left';
-                            ctx.fillText(`β=${x.toFixed(2)}`, xToCanvas(x) + 10, yToCanvas(y) - 5);
-                        }
-                    }
-                }
-            }
-            
-            // Draw legend
-            function drawLegend() {
-                const legendX = xToCanvas(xMax) + 10;
-                const legendY = margin.top + 20;
-                const lineLength = 20;
-                const spacing = 25;
-                
-                ctx.font = 'bold 12px Arial';
-                ctx.textAlign = 'left';
-                ctx.fillStyle = colors.darkGray;
-                ctx.fillText('Learning Rates:', legendX, legendY);
-                
-                for (let i = 0; i < learningRates.length; i++) {
-                    const y = legendY + (i + 1) * spacing;
-                    
-                    // Draw line
-                    ctx.strokeStyle = pathColors[i];
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.moveTo(legendX, y);
-                    ctx.lineTo(legendX + lineLength, y);
-                    ctx.stroke();
-                    
-                    // Draw point
-                    ctx.fillStyle = pathColors[i];
-                    ctx.beginPath();
-                    ctx.arc(legendX + lineLength/2, y, 4, 0, 2 * Math.PI);
-                    ctx.fill();
-                    
-                    // Draw label
-                    ctx.fillStyle = colors.darkGray;
-                    ctx.textAlign = 'left';
-                    
-                    let label;
-                    if (i === 0) {
-                        label = `α=${learningRates[i]} (good)`;
-                    } else if (i === 1) {
-                        label = `α=${learningRates[i]} (good)`;
-                    } else {
-                        label = `α=${learningRates[i]} (too large)`;
-                    }
-                    
-                    ctx.fillText(label, legendX + lineLength + 5, y + 4);
-                }
-            }
-            
-            // Animation function
-            function animate() {
-                currentFrame = (currentFrame + 1) % (maxFrames + 30); // Extra frames for pause
-                
-                // Draw the current frame
-                draw();
-                
-                // Continue animation
-                animationId = setTimeout(animate, 200); // Slower animation speed (200ms between frames)
-            }
-            
-            // Initial draw to show the canvas with the parabola
-            draw();
-            
-            // Start animation
-            animate();
-        }
-        
-        // Wait for section 29 to be displayed before starting the animation
-        document.addEventListener('DOMContentLoaded', function() {
-            // First draw the initial state
-            const canvas = document.getElementById('learningRateComparison2Canvas');
-            const ctx = canvas.getContext('2d');
-            ctx.font = '14px Arial';
-            ctx.fillStyle = '#444444';
-            ctx.textAlign = 'center';
-            ctx.fillText('Visualization will start when this section is displayed', canvas.width/2, canvas.height/2);
-            
-            // Add an event listener to section 29
-            const section29 = document.getElementById('section29');
-            if (section29) {
-                section29.addEventListener('transitionend', function(e) {
-                    if (e.target === this && this.style.opacity == 1) {
-                        // Section 29 is now visible, start the animation
-                        initLearningRateComparison2();
-                    }
-                });
-            }
-        });
-    </script>
-</div>
-</br>
-
-<p>Gradient Descent converges to 0, which is exactly what we want!</p>
-<div class="continue-button" onclick="showNextSection(30)">Continue</div>
-    </section>
-
-    <section id="section30">
-<p>Now let's see what happens with a too large learning rate.</p>
-</br>
-
-      <div class="interactive-placeholder">
-    <canvas id="learningRateComparison3Canvas" width="800" height="500"></canvas>
-    <script>
-        // Define the visualization function but don't start it immediately
-        function initLearningRateComparison3() {
-            // Get canvas and context
-            const canvas = document.getElementById('learningRateComparison3Canvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Parameters for gradient descent
-            const initialBeta = 5;
-            const learningRates = [0.8]; // small, good, large
-            const numIterations = 50; // More iterations to show differences
-            const maxFrames = 100; // More frames for slower animation
-            
-            // Calculate gradient descent paths for different learning rates
-            function calculateGradientDescentPaths() {
-                const allPaths = [];
-                
-                for (const alpha of learningRates) {
-                    const betaValues = [initialBeta];
-                    const costValues = [initialBeta * initialBeta];
-                    
-                    let beta = initialBeta;
-                    for (let i = 0; i < numIterations; i++) {
-                        const gradient = 2 * beta; // Derivative of β²
-                        beta = beta - alpha * gradient;
-                        
-                        // For large learning rates, check for divergence
-                        if (Math.abs(beta) > 10) {
-                            break; // Stop if diverging
-                        }
-                        
-                        betaValues.push(beta);
-                        costValues.push(beta * beta);
-                    }
-                    
-                    allPaths.push({ betaValues, costValues });
-                }
-                
-                return allPaths;
-            }
-            
-            // Calculate all paths
-            const allPaths = calculateGradientDescentPaths();
-            
-            // Canvas dimensions and margins
-            const margin = { top: 40, right: 140, bottom: 60, left: 70 };
-            const width = canvas.width - margin.left - margin.right;
-            const height = canvas.height - margin.top - margin.bottom;
-            
-            // Define the coordinate bounds for our visualization
-            const xMin = -6;
-            const xMax = 6;
-            const yMin = -1;
-            const yMax = 30;
-            
-            // Colors
-            const colors = {
-                blue: '#4C72B0',
-                red: '#C44E52',
-                green: '#55A868',
-                purple: '#8172B3',
-                orange: '#CCB974',
-                gray: '#E0E0E0',
-                darkGray: '#444444'
-            };
-            
-            // Path colors
-            const pathColors = [colors.purple, colors.green, colors.red];
-            
-            // Functions to convert from data coordinates to canvas pixels
-            function xToCanvas(x) {
-                return margin.left + width * (x - xMin) / (xMax - xMin);
-            }
-            
-            function yToCanvas(y) {
-                return margin.top + height * (1 - (y - yMin) / (yMax - yMin));
-            }
-            
-            // Current frame for animation
-            let currentFrame = 0;
-            let animationId = null;
-            
-            // Draw the visualization
-            function draw() {
-                // Clear canvas
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                // Draw grid
-                drawGrid();
-                
-                // Draw axes
-                drawAxes();
-                
-                // Draw the parabola (cost function)
-                drawCostFunction();
-                
-                // Draw gradient descent paths
-                drawPaths();
-                
-                // Draw legend
-                drawLegend();
-            }
-            
-            // Draw a light grid
-            function drawGrid() {
-                ctx.strokeStyle = colors.gray;
-                ctx.lineWidth = 0.5;
-                
-                // Vertical grid lines
-                for (let x = Math.floor(xMin); x <= Math.ceil(xMax); x++) {
-                    ctx.beginPath();
-                    ctx.moveTo(xToCanvas(x), yToCanvas(yMin));
-                    ctx.lineTo(xToCanvas(x), yToCanvas(yMax));
-                    ctx.stroke();
-                }
-                
-                // Horizontal grid lines
-                for (let y = Math.floor(yMin); y <= Math.ceil(yMax); y += 5) {
-                    ctx.beginPath();
-                    ctx.moveTo(xToCanvas(xMin), yToCanvas(y));
-                    ctx.lineTo(xToCanvas(xMax), yToCanvas(y));
-                    ctx.stroke();
-                }
-            }
-            
-            // Draw x and y axes
-            function drawAxes() {
-                ctx.strokeStyle = colors.darkGray;
-                ctx.lineWidth = 2;
-                ctx.font = '12px Arial';
-                ctx.textAlign = 'center';
-                
-                // X-axis
-                ctx.beginPath();
-                ctx.moveTo(xToCanvas(xMin), yToCanvas(0));
-                ctx.lineTo(xToCanvas(xMax), yToCanvas(0));
-                ctx.stroke();
-                
-                // X-axis ticks and labels
-                ctx.fillStyle = colors.darkGray;
-                for (let x = Math.floor(xMin); x <= Math.ceil(xMax); x += 2) {
-                    ctx.beginPath();
-                    ctx.moveTo(xToCanvas(x), yToCanvas(0) - 5);
-                    ctx.lineTo(xToCanvas(x), yToCanvas(0) + 5);
-                    ctx.stroke();
-                    
-                    ctx.fillText(x.toString(), xToCanvas(x), yToCanvas(0) + 20);
-                }
-                
-                // X-axis label
-                ctx.fillText('Parameter (β)', xToCanvas((xMax + xMin) / 2), yToCanvas(yMin) + 35);
-                
-                // Y-axis
-                ctx.beginPath();
-                ctx.moveTo(xToCanvas(0), yToCanvas(yMin));
-                ctx.lineTo(xToCanvas(0), yToCanvas(yMax));
-                ctx.stroke();
-                
-                // Y-axis ticks and labels
-                ctx.textAlign = 'right';
-                for (let y = 0; y <= yMax; y += 5) {
-                    ctx.beginPath();
-                    ctx.moveTo(xToCanvas(0) - 5, yToCanvas(y));
-                    ctx.lineTo(xToCanvas(0) + 5, yToCanvas(y));
-                    ctx.stroke();
-                    
-                    ctx.fillText(y.toString(), xToCanvas(0) - 10, yToCanvas(y) + 4);
-                }
-                
-                // Y-axis label
-                ctx.save();
-                ctx.translate(xToCanvas(xMin) - 35, yToCanvas((yMax + yMin) / 2));
-                ctx.rotate(-Math.PI / 2);
-                ctx.textAlign = 'center';
-                ctx.fillText('Cost: C(β)', 0, 0);
-                ctx.restore();
-            }
-            
-            // Draw the cost function curve
-            function drawCostFunction() {
-                ctx.strokeStyle = colors.blue;
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                
-                for (let x = xMin; x <= xMax; x += 0.1) {
-                    const y = x * x; // Our cost function is C(β) = β²
-                    
-                    if (x === xMin) {
-                        ctx.moveTo(xToCanvas(x), yToCanvas(y));
-                    } else {
-                        ctx.lineTo(xToCanvas(x), yToCanvas(y));
-                    }
-                }
-                
-                ctx.stroke();
-                
-                // Label for the cost function
-                ctx.fillStyle = colors.blue;
-                ctx.font = 'bold 14px Arial';
-                ctx.textAlign = 'left';
-                ctx.fillText('Cost Function: C(β) = β²', xToCanvas(-5.5), yToCanvas(27));
-            }
-            
-            // Draw the gradient descent paths
-            function drawPaths() {
-                for (let pathIdx = 0; pathIdx < allPaths.length; pathIdx++) {
-                    const { betaValues, costValues } = allPaths[pathIdx];
-                    const color = pathColors[pathIdx];
-                    
-                    // Calculate number of points to show at current animation frame
-                    const maxPoints = Math.min(
-                        betaValues.length,
-                        Math.ceil((currentFrame / maxFrames) * betaValues.length)
-                    );
-                    
-                    // Path line
-                    ctx.strokeStyle = color;
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    
-                    for (let i = 0; i < maxPoints; i++) {
-                        const x = betaValues[i];
-                        const y = costValues[i];
-                        
-                        if (i === 0) {
-                            ctx.moveTo(xToCanvas(x), yToCanvas(y));
-                        } else {
-                            ctx.lineTo(xToCanvas(x), yToCanvas(y));
-                        }
-                    }
-                    
-                    ctx.stroke();
-                    
-                    // Draw points
-                    for (let i = 0; i < maxPoints; i++) {
-                        const x = betaValues[i];
-                        const y = costValues[i];
-                        
-                        // Draw point
-                        ctx.fillStyle = color;
-                        ctx.beginPath();
-                        ctx.arc(xToCanvas(x), yToCanvas(y), 4, 0, 2 * Math.PI);
-                        ctx.fill();
-                        
-                        // Draw label for first and last point of each path
-                        if (i === 0 || i === maxPoints - 1) {
-                            ctx.fillStyle = colors.darkGray;
-                            ctx.font = '10px Arial';
-                            ctx.textAlign = 'left';
-                            ctx.fillText(`β=${x.toFixed(2)}`, xToCanvas(x) + 10, yToCanvas(y) - 5);
-                        }
-                    }
-                }
-            }
-            
-            // Draw legend
-            function drawLegend() {
-                const legendX = xToCanvas(xMax) + 10;
-                const legendY = margin.top + 20;
-                const lineLength = 20;
-                const spacing = 25;
-                
-                ctx.font = 'bold 12px Arial';
-                ctx.textAlign = 'left';
-                ctx.fillStyle = colors.darkGray;
-                ctx.fillText('Learning Rates:', legendX, legendY);
-                
-                for (let i = 0; i < learningRates.length; i++) {
-                    const y = legendY + (i + 1) * spacing;
-                    
-                    // Draw line
-                    ctx.strokeStyle = pathColors[i];
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.moveTo(legendX, y);
-                    ctx.lineTo(legendX + lineLength, y);
-                    ctx.stroke();
-                    
-                    // Draw point
-                    ctx.fillStyle = pathColors[i];
-                    ctx.beginPath();
-                    ctx.arc(legendX + lineLength/2, y, 4, 0, 2 * Math.PI);
-                    ctx.fill();
-                    
-                    // Draw label
-                    ctx.fillStyle = colors.darkGray;
-                    ctx.textAlign = 'left';
-                    
-                    let label;
-                    if (i === 0) {
-                        label = `α=${learningRates[i]} (too large)`;
-                    } else if (i === 1) {
-                        label = `α=${learningRates[i]} (good)`;
-                    } else {
-                        label = `α=${learningRates[i]} (too large)`;
-                    }
-                    
-                    ctx.fillText(label, legendX + lineLength + 5, y + 4);
-                }
-            }
-            
-            // Animation function
-            function animate() {
-                currentFrame = (currentFrame + 1) % (maxFrames + 30); // Extra frames for pause
-                
-                // Draw the current frame
-                draw();
-                
-                // Continue animation
-                animationId = setTimeout(animate, 200); // Slower animation speed (200ms between frames)
-            }
-            
-            // Initial draw to show the canvas with the parabola
-            draw();
-            
-            // Start animation
-            animate();
-        }
-        
-        // Wait for section 30 to be displayed before starting the animation
-        document.addEventListener('DOMContentLoaded', function() {
-            // First draw the initial state
-            const canvas = document.getElementById('learningRateComparison3Canvas');
-            const ctx = canvas.getContext('2d');
-            ctx.font = '14px Arial';
-            ctx.fillStyle = '#444444';
-            ctx.textAlign = 'center';
-            ctx.fillText('Visualization will start when this section is displayed', canvas.width/2, canvas.height/2);
-            
-            // Add an event listener to section 30
-            const section30 = document.getElementById('section30');
-            if (section30) {
-                section30.addEventListener('transitionend', function(e) {
-                    if (e.target === this && this.style.opacity == 1) {
-                        // Section 30 is now visible, start the animation
-                        initLearningRateComparison3();
-                    }
-                });
-            }
-        });
-    </script>
-</div>
-</br>
-
-        <p>The Gradient descent overshoots the minimum and bounces around.</p>
-
-        <div class="continue-button" onclick="showNextSection(31)">Continue</div>
-    </section>
-
-    <section id="section31">
-        <h2>Real-World Applications</h2>
-        <p>Gradient descent is the workhorse behind most modern machine learning algorithms. Let's look at a few common applications:</p>
-        <div class="continue-button" onclick="showNextSection(32)">Continue</div>
-    </section>
-
-    <section id="section32">
-        <ol>
-            <li>Linear Regression: Finding the line of best fit for a dataset by minimizing the sum of squared errors.</li>
-            <li>Logistic Regression: Training classifiers for tasks like spam detection or disease diagnosis.</li>
-            <li>Neural Networks: Training deep learning models for image recognition, natural language processing, and more.</li>
-            <li>Recommendation Systems: Optimizing user-item interaction predictions on platforms like Netflix or Amazon.</li>
-        </ol>
-        <div class="continue-button" onclick="showNextSection(33)">Continue</div>
-    </section>
-
-    <section id="section33">
-        <p>While the specific cost functions vary, the core idea remains the same: iteratively adjust parameters to minimize an error function.</p>
-        <div class="continue-button" onclick="showNextSection(34)">Continue</div>
-    </section>
-
-    
-
-    <section id="section34">
-        <div class="stop-and-think">
-            <h3>Stop and Think</h3>
-            <h4>Thinking about the mountain analogy we started with, what might represent a 'local minimum' that isn't the lowest possible point? What challenges might this present?</h4>
-<p>Try to think of an answer yourself before you hit the reveal button.</p>            
-<button class="reveal-button" onclick="revealAnswer('stop-and-think-2')">Reveal</button>
-            <p id="stop-and-think-2" style="display: none;">A local minimum is like a small valley or depression on the mountainside, but not the lowest valley. If you start nearby and follow the steepest downward path, you'll end up in this local valley rather than finding the deepest one. This represents a major challenge in optimization—gradient descent might get stuck in these suboptimal solutions because it only sees the local landscape, not the global picture. We'll explore this challenge more in later lessons.</p>
-        </div>
-        <div class="continue-button" onclick="showNextSection(35)">Continue</div>
-    </section>
-
-    <section id="section35">
-        <h2>Review</h2>
-        <div class="image-placeholder">
-            <img src="images/ball.png?height=300&width=600" alt="Summary image shows the gradient descent process visualized as a ball rolling down a 3D cost function surface, with arrows indicating the negative gradient direction at different points, and key concepts labeled: learning rate, gradient, update rule, and convergence.">
-        </div>
-        <p>In this lesson, we've introduced gradient descent, a fundamental optimization algorithm in machine learning:</p>
-        <ul>
-            <li>Gradient descent iteratively adjusts parameters to minimize a cost function</li>
-            <li>It works by calculating the gradient (direction of steepest increase) and moving in the opposite direction</li>
-            <li>The update rule is \( \beta = \beta - \alpha\nabla_\beta C(\beta) \)</li>
-            <li>The learning rate \( \alpha \) controls the step size and significantly impacts convergence</li>
-            <li>This method makes it possible to train models on large datasets where direct solutions are impractical</li>
-        </ul>
-        <p>In the next lesson, we'll delve deeper into the mathematics of gradient descent and explore how to calculate gradients for different types of cost functions.</p>
-<div class="continue-button" onclick="showNextSection(36)">Continue</div>
-</section>
-
-
-<section id="section36">
-        <div class="faq-section">
-            <h3>Frequently Asked Questions</h3>
-            <h4>How do we know when to stop the gradient descent algorithm?</h4>
-            <p>In practice, we use one or more stopping criteria:</p>
-            <ol>
-                <li>Maximum number of iterations: Stop after a predefined number of iterations.</li>
-                <li>Threshold on the change in cost: Stop when the decrease in the cost function between iterations becomes very small.</li>
-                <li>Threshold on the gradient magnitude: Stop when the gradient becomes very close to zero, indicating we're near a minimum.</li>
-            </ol>
-            <p>The specific criteria used depend on the application and computational resources available.</p>
-        </div>
- </section>
-
-
 
     <script>
         // Show the first section initially
@@ -1731,621 +419,32 @@
             }, 500);
         }
 
-        function revealAnswer(id) {
-            const revealText = document.getElementById(id);
-            const revealButton = event.target;
+        function checkAnswer(element, isCorrect) {
+            // Remove any previous correct/incorrect classes
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => {
+                option.classList.remove('correct', 'incorrect');
+            });
             
-            revealText.style.display = "block";
-            revealButton.style.display = "none";
-        }
-
-        function checkAnswer(questionId, correctAnswer) {
-            const question = document.getElementById(questionId);
-            const selectedAnswer = question.querySelector('input:checked');
-            const feedback = document.createElement('p');
-            
-            if (selectedAnswer && selectedAnswer.id === correctAnswer) {
-                feedback.textContent = "Correct!";
-                feedback.style.color = "green";
+            // Add the appropriate class
+            if (isCorrect) {
+                element.classList.add('correct');
             } else {
-                feedback.textContent = "Incorrect. Try again!";
-                feedback.style.color = "red";
+                element.classList.add('incorrect');
             }
             
-            question.appendChild(feedback);
-        }
-
-        function checkMatching() {
-            const correctAnswers = {
-                match1: "a",
-                match2: "b",
-                match3: "c",
-                match4: "d"
-            };
+            // Show the explanation
+            const explanation = element.querySelector('.option-explanation');
+            explanation.style.display = 'block';
             
-            let allCorrect = true;
-            
-            for (let i = 1; i <= 4; i++) {
-                const select = document.getElementById(`match${i}`);
-                const feedback = document.createElement('span');
-                feedback.style.marginLeft = "10px";
-                
-                if (select.value === correctAnswers[`match${i}`]) {
-                    feedback.textContent = "✓";
-                    feedback.style.color = "green";
-                } else {
-                    feedback.textContent = "✗";
-                    feedback.style.color = "red";
-                    allCorrect = false;
+            // Hide other explanations
+            options.forEach(option => {
+                if (option !== element) {
+                    const otherExplanation = option.querySelector('.option-explanation');
+                    otherExplanation.style.display = 'none';
                 }
-                
-                select.parentNode.appendChild(feedback);
-            }
-            
-            const overallFeedback = document.createElement('p');
-            overallFeedback.textContent = allCorrect ? "All correct! Great job!" : "Some answers are incorrect. Try again!";
-            overallFeedback.style.color = allCorrect ? "green" : "red";
-            document.getElementById("test-your-knowledge-4").appendChild(overallFeedback);
+            });
         }
-
-// Gradient Descent Animation - 4 iterations
-function initGradientDescent4Iterations(canvasId) {
-    // Get canvas and context
-    const canvas = document.getElementById(canvasId);
-    if (!canvas) return; // Skip if canvas element doesn't exist
-    
-    const ctx = canvas.getContext('2d');
-    
-    // Parameters for gradient descent
-    const initialBeta = 5;
-    const learningRate = 0.1;
-    const numIterations = 10;
-    const maxDisplayIterations = 4; // Only display first 4 iterations
-    
-    // Calculate all steps of gradient descent
-    function calculateGradientDescent() {
-        const betaValues = [initialBeta];
-        const costValues = [initialBeta * initialBeta];
-        
-        let beta = initialBeta;
-        for (let i = 0; i < numIterations; i++) {
-            const gradient = 2 * beta; // Derivative of β²
-            beta = beta - learningRate * gradient;
-            betaValues.push(beta);
-            costValues.push(beta * beta);
-        }
-        
-        return { betaValues, costValues };
-    }
-    
-    // Calculate once and store results
-    const { betaValues, costValues } = calculateGradientDescent();
-    
-    // Current iteration to display
-    let currentIteration = 0;
-    
-    // Canvas dimensions and margins
-    const margin = { top: 30, right: 30, bottom: 50, left: 60 };
-    const width = canvas.width - margin.left - margin.right;
-    const height = canvas.height - margin.top - margin.bottom;
-    
-    // Define the coordinate bounds for our visualization
-    const xMin = -6;
-    const xMax = 6;
-    const yMin = -1;
-    const yMax = 30;
-    
-    // Colors
-    const colors = {
-        blue: '#4C72B0',
-        red: '#C44E52',
-        green: '#55A868',
-        purple: '#8172B3',
-        orange: '#CCB974',
-        pink: '#DD8ACE',
-        gray: '#E0E0E0',
-        darkGray: '#444444'
-    };
-    
-    // Functions to convert from data coordinates to canvas pixels
-    function xToCanvas(x) {
-        return margin.left + width * (x - xMin) / (xMax - xMin);
-    }
-    
-    function yToCanvas(y) {
-        return margin.top + height * (1 - (y - yMin) / (yMax - yMin));
-    }
-    
-    // Draw the visualization for the current iteration
-    function draw() {
-        // Clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // Draw grid
-        drawGrid();
-        
-        // Draw axes
-        drawAxes();
-        
-        // Draw the parabola (cost function)
-        drawCostFunction();
-        
-        // Draw gradient descent path
-        drawPath();
-    }
-    
-    // Draw a light grid
-    function drawGrid() {
-        ctx.strokeStyle = colors.gray;
-        ctx.lineWidth = 0.5;
-        
-        // Vertical grid lines
-        for (let x = Math.floor(xMin); x <= Math.ceil(xMax); x++) {
-            ctx.beginPath();
-            ctx.moveTo(xToCanvas(x), yToCanvas(yMin));
-            ctx.lineTo(xToCanvas(x), yToCanvas(yMax));
-            ctx.stroke();
-        }
-        
-        // Horizontal grid lines
-        for (let y = Math.floor(yMin); y <= Math.ceil(yMax); y += 5) {
-            ctx.beginPath();
-            ctx.moveTo(xToCanvas(xMin), yToCanvas(y));
-            ctx.lineTo(xToCanvas(xMax), yToCanvas(y));
-            ctx.stroke();
-        }
-    }
-    
-    // Draw x and y axes
-    function drawAxes() {
-        ctx.strokeStyle = colors.darkGray;
-        ctx.lineWidth = 2;
-        ctx.font = '12px Arial';
-        ctx.textAlign = 'center';
-        
-        // X-axis
-        ctx.beginPath();
-        ctx.moveTo(xToCanvas(xMin), yToCanvas(0));
-        ctx.lineTo(xToCanvas(xMax), yToCanvas(0));
-        ctx.stroke();
-        
-        // X-axis ticks and labels
-        ctx.fillStyle = colors.darkGray;
-        for (let x = Math.floor(xMin); x <= Math.ceil(xMax); x += 2) {
-            ctx.beginPath();
-            ctx.moveTo(xToCanvas(x), yToCanvas(0) - 5);
-            ctx.lineTo(xToCanvas(x), yToCanvas(0) + 5);
-            ctx.stroke();
-            
-            ctx.fillText(x.toString(), xToCanvas(x), yToCanvas(0) + 20);
-        }
-        
-        // X-axis label
-        ctx.fillText('Parameter (β)', xToCanvas((xMax + xMin) / 2), yToCanvas(yMin) + 35);
-        
-        // Y-axis
-        ctx.beginPath();
-        ctx.moveTo(xToCanvas(0), yToCanvas(yMin));
-        ctx.lineTo(xToCanvas(0), yToCanvas(yMax));
-        ctx.stroke();
-        
-        // Y-axis ticks and labels
-        ctx.textAlign = 'right';
-        for (let y = 0; y <= yMax; y += 5) {
-            ctx.beginPath();
-            ctx.moveTo(xToCanvas(0) - 5, yToCanvas(y));
-            ctx.lineTo(xToCanvas(0) + 5, yToCanvas(y));
-            ctx.stroke();
-            
-            ctx.fillText(y.toString(), xToCanvas(0) - 10, yToCanvas(y) + 4);
-        }
-        
-        // Y-axis label
-        ctx.save();
-        ctx.translate(xToCanvas(xMin) - 35, yToCanvas((yMax + yMin) / 2));
-        ctx.rotate(-Math.PI / 2);
-        ctx.textAlign = 'center';
-        ctx.fillText('Cost: C(β)', 0, 0);
-        ctx.restore();
-    }
-    
-    // Draw the cost function curve
-    function drawCostFunction() {
-        ctx.strokeStyle = colors.blue;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        
-        for (let x = xMin; x <= xMax; x += 0.1) {
-            const y = x * x; // Our cost function is C(β) = β²
-            
-            if (x === xMin) {
-                ctx.moveTo(xToCanvas(x), yToCanvas(y));
-            } else {
-                ctx.lineTo(xToCanvas(x), yToCanvas(y));
-            }
-        }
-        
-        ctx.stroke();
-        
-        // Label for the cost function
-        ctx.fillStyle = colors.blue;
-        ctx.font = 'bold 14px Arial';
-        ctx.textAlign = 'left';
-        ctx.fillText('Cost Function: C(β) = β²', xToCanvas(-5.5), yToCanvas(27));
-    }
-    
-    // Draw the gradient descent path
-    function drawPath() {
-        // Path line
-        ctx.strokeStyle = colors.red;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        
-        for (let i = 0; i <= currentIteration; i++) {
-            const x = betaValues[i];
-            const y = costValues[i];
-            
-            if (i === 0) {
-                ctx.moveTo(xToCanvas(x), yToCanvas(y));
-            } else {
-                ctx.lineTo(xToCanvas(x), yToCanvas(y));
-            }
-        }
-        
-        ctx.stroke();
-        
-        // Draw points and arrows
-        for (let i = 0; i <= currentIteration; i++) {
-            const x = betaValues[i];
-            const y = costValues[i];
-            
-            // Draw point
-            ctx.fillStyle = colors.green;
-            ctx.beginPath();
-            ctx.arc(xToCanvas(x), yToCanvas(y), 5, 0, 2 * Math.PI);
-            ctx.fill();
-            
-            // Draw arrow between points
-            if (i < currentIteration) {
-                drawArrow(
-                    xToCanvas(betaValues[i]), yToCanvas(costValues[i]),
-                    xToCanvas(betaValues[i+1]), yToCanvas(costValues[i+1])
-                );
-            }
-        }
-    }
-    
-    // Draw an arrow from (x1,y1) to (x2,y2)
-    function drawArrow(fromX, fromY, toX, toY) {
-        const headLength = 10;
-        const angle = Math.atan2(toY - fromY, toX - fromX);
-        
-        // Draw the line
-        ctx.strokeStyle = colors.purple;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(fromX, fromY);
-        ctx.lineTo(toX, toY);
-        ctx.stroke();
-        
-        // Draw the arrowhead
-        ctx.fillStyle = colors.purple;
-        ctx.beginPath();
-        ctx.moveTo(toX, toY);
-        ctx.lineTo(
-            toX - headLength * Math.cos(angle - Math.PI/6),
-            toY - headLength * Math.sin(angle - Math.PI/6)
-        );
-        ctx.lineTo(
-            toX - headLength * Math.cos(angle + Math.PI/6),
-            toY - headLength * Math.sin(angle + Math.PI/6)
-        );
-        ctx.closePath();
-        ctx.fill();
-    }
-    
-    // Animation function
-    function animate() {
-        // Move to next iteration
-        currentIteration = (currentIteration + 1) % (maxDisplayIterations + 1);
-        
-        // If we reached the end, pause briefly before looping
-        if (currentIteration === 0) {
-            setTimeout(draw, 1000); // Pause for 1 second at the end
-            setTimeout(animate, 1500); // Then continue
-        } else {
-            draw();
-            setTimeout(animate, 800); // Normal animation speed
-        }
-    }
-    
-    // Start animation
-    draw();
-    setTimeout(animate, 800);
-}
-
-// Gradient Descent Animation - Until Minimum
-function initGradientDescentUntilMin(canvasId) {
-    // Get canvas and context
-    const canvas = document.getElementById(canvasId);
-    if (!canvas) return; // Skip if canvas element doesn't exist
-    
-    const ctx = canvas.getContext('2d');
-    
-    // Parameters for gradient descent
-    const initialBeta = 5;
-    const learningRate = 0.1;
-    const costThreshold = 0.01; // Stop when cost is very close to 0
-    
-    // Calculate all steps of gradient descent until cost is near 0
-    function calculateGradientDescent() {
-        const betaValues = [initialBeta];
-        const costValues = [initialBeta * initialBeta];
-        
-        let beta = initialBeta;
-        let cost = beta * beta;
-        let iterations = 0;
-        
-        // Continue until cost is very close to 0 or max iterations reached
-        while (cost > costThreshold && iterations < 30) {
-            const gradient = 2 * beta; // Derivative of β²
-            beta = beta - learningRate * gradient;
-            cost = beta * beta;
-            
-            betaValues.push(beta);
-            costValues.push(cost);
-            iterations++;
-        }
-        
-        return { betaValues, costValues };
-    }
-    
-    // Calculate once and store results
-    const { betaValues, costValues } = calculateGradientDescent();
-    const numIterations = betaValues.length - 1;
-    
-    // Current iteration to display
-    let currentIteration = 0;
-    
-    // Canvas dimensions and margins
-    const margin = { top: 30, right: 30, bottom: 50, left: 60 };
-    const width = canvas.width - margin.left - margin.right;
-    const height = canvas.height - margin.top - margin.bottom;
-    
-    // Define the coordinate bounds for our visualization
-    const xMin = -6;
-    const xMax = 6;
-    const yMin = -1;
-    const yMax = 30;
-    
-    // Colors
-    const colors = {
-        blue: '#4C72B0',
-        red: '#C44E52',
-        green: '#55A868',
-        purple: '#8172B3',
-        orange: '#CCB974',
-        pink: '#DD8ACE',
-        gray: '#E0E0E0',
-        darkGray: '#444444'
-    };
-    
-    // Functions to convert from data coordinates to canvas pixels
-    function xToCanvas(x) {
-        return margin.left + width * (x - xMin) / (xMax - xMin);
-    }
-    
-    function yToCanvas(y) {
-        return margin.top + height * (1 - (y - yMin) / (yMax - yMin));
-    }
-    
-    // Draw the visualization for the current iteration
-    function draw() {
-        // Clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // Draw grid
-        drawGrid();
-        
-        // Draw axes
-        drawAxes();
-        
-        // Draw the parabola (cost function)
-        drawCostFunction();
-        
-        // Draw gradient descent path
-        drawPath();
-    }
-    
-    // Draw a light grid
-    function drawGrid() {
-        ctx.strokeStyle = colors.gray;
-        ctx.lineWidth = 0.5;
-        
-        // Vertical grid lines
-        for (let x = Math.floor(xMin); x <= Math.ceil(xMax); x++) {
-            ctx.beginPath();
-            ctx.moveTo(xToCanvas(x), yToCanvas(yMin));
-            ctx.lineTo(xToCanvas(x), yToCanvas(yMax));
-            ctx.stroke();
-        }
-        
-        // Horizontal grid lines
-        for (let y = Math.floor(yMin); y <= Math.ceil(yMax); y += 5) {
-            ctx.beginPath();
-            ctx.moveTo(xToCanvas(xMin), yToCanvas(y));
-            ctx.lineTo(xToCanvas(xMax), yToCanvas(y));
-            ctx.stroke();
-        }
-    }
-    
-    // Draw x and y axes
-    function drawAxes() {
-        ctx.strokeStyle = colors.darkGray;
-        ctx.lineWidth = 2;
-        ctx.font = '12px Arial';
-        ctx.textAlign = 'center';
-        
-        // X-axis
-        ctx.beginPath();
-        ctx.moveTo(xToCanvas(xMin), yToCanvas(0));
-        ctx.lineTo(xToCanvas(xMax), yToCanvas(0));
-        ctx.stroke();
-        
-        // X-axis ticks and labels
-        ctx.fillStyle = colors.darkGray;
-        for (let x = Math.floor(xMin); x <= Math.ceil(xMax); x += 2) {
-            ctx.beginPath();
-            ctx.moveTo(xToCanvas(x), yToCanvas(0) - 5);
-            ctx.lineTo(xToCanvas(x), yToCanvas(0) + 5);
-            ctx.stroke();
-            
-            ctx.fillText(x.toString(), xToCanvas(x), yToCanvas(0) + 20);
-        }
-        
-        // X-axis label
-        ctx.fillText('Parameter (β)', xToCanvas((xMax + xMin) / 2), yToCanvas(yMin) + 35);
-        
-        // Y-axis
-        ctx.beginPath();
-        ctx.moveTo(xToCanvas(0), yToCanvas(yMin));
-        ctx.lineTo(xToCanvas(0), yToCanvas(yMax));
-        ctx.stroke();
-        
-        // Y-axis ticks and labels
-        ctx.textAlign = 'right';
-        for (let y = 0; y <= yMax; y += 5) {
-            ctx.beginPath();
-            ctx.moveTo(xToCanvas(0) - 5, yToCanvas(y));
-            ctx.lineTo(xToCanvas(0) + 5, yToCanvas(y));
-            ctx.stroke();
-            
-            ctx.fillText(y.toString(), xToCanvas(0) - 10, yToCanvas(y) + 4);
-        }
-        
-        // Y-axis label
-        ctx.save();
-        ctx.translate(xToCanvas(xMin) - 35, yToCanvas((yMax + yMin) / 2));
-        ctx.rotate(-Math.PI / 2);
-        ctx.textAlign = 'center';
-        ctx.fillText('Cost: C(β)', 0, 0);
-        ctx.restore();
-    }
-    
-    // Draw the cost function curve
-    function drawCostFunction() {
-        ctx.strokeStyle = colors.blue;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        
-        for (let x = xMin; x <= xMax; x += 0.1) {
-            const y = x * x; // Our cost function is C(β) = β²
-            
-            if (x === xMin) {
-                ctx.moveTo(xToCanvas(x), yToCanvas(y));
-            } else {
-                ctx.lineTo(xToCanvas(x), yToCanvas(y));
-            }
-        }
-        
-        ctx.stroke();
-        
-        // Label for the cost function
-        ctx.fillStyle = colors.blue;
-        ctx.font = 'bold 14px Arial';
-        ctx.textAlign = 'left';
-        ctx.fillText('Cost Function: C(β) = β²', xToCanvas(-5.5), yToCanvas(27));
-    }
-    
-    // Draw the gradient descent path
-    function drawPath() {
-        // Path line
-        ctx.strokeStyle = colors.red;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        
-        for (let i = 0; i <= currentIteration; i++) {
-            const x = betaValues[i];
-            const y = costValues[i];
-            
-            if (i === 0) {
-                ctx.moveTo(xToCanvas(x), yToCanvas(y));
-            } else {
-                ctx.lineTo(xToCanvas(x), yToCanvas(y));
-            }
-        }
-        
-        ctx.stroke();
-        
-        // Draw points and arrows
-        for (let i = 0; i <= currentIteration; i++) {
-            const x = betaValues[i];
-            const y = costValues[i];
-            
-            // Draw point
-            ctx.fillStyle = colors.green;
-            ctx.beginPath();
-            ctx.arc(xToCanvas(x), yToCanvas(y), 5, 0, 2 * Math.PI);
-            ctx.fill();
-            
-            // Draw arrow between points
-            if (i < currentIteration) {
-                drawArrow(
-                    xToCanvas(betaValues[i]), yToCanvas(costValues[i]),
-                    xToCanvas(betaValues[i+1]), yToCanvas(costValues[i+1])
-                );
-            }
-        }
-    }
-    
-    // Draw an arrow from (x1,y1) to (x2,y2)
-    function drawArrow(fromX, fromY, toX, toY) {
-        const headLength = 10;
-        const angle = Math.atan2(toY - fromY, toX - fromX);
-        
-        // Draw the line
-        ctx.strokeStyle = colors.purple;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(fromX, fromY);
-        ctx.lineTo(toX, toY);
-        ctx.stroke();
-        
-        // Draw the arrowhead
-        ctx.fillStyle = colors.purple;
-        ctx.beginPath();
-        ctx.moveTo(toX, toY);
-        ctx.lineTo(
-            toX - headLength * Math.cos(angle - Math.PI/6),
-            toY - headLength * Math.sin(angle - Math.PI/6)
-        );
-        ctx.lineTo(
-            toX - headLength * Math.cos(angle + Math.PI/6),
-            toY - headLength * Math.sin(angle + Math.PI/6)
-        );
-        ctx.closePath();
-        ctx.fill();
-    }
-    
-    // Animation function
-    function animate() {
-        // Move to next iteration
-        currentIteration = (currentIteration + 1) % (numIterations + 1);
-        
-        // If we reached the end, pause briefly before looping
-        if (currentIteration === 0) {
-            setTimeout(draw, 1000); // Pause for 1 second at the end
-            setTimeout(animate, 1500); // Then continue
-        } else {
-            draw();
-            setTimeout(animate, 800); // Normal animation speed
-        }
-    }
-    
-    // Start animation
-    draw();
-    setTimeout(animate, 800);
-}
     </script>
 </body>
 </html>
